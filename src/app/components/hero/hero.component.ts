@@ -26,12 +26,14 @@ import { Component } from '@angular/core';
   `,
   styles: [`
     .hero-container {
-      background: linear-gradient(to bottom right, #6C9E72, transparent);
+      background: linear-gradient(to bottom right, #4a90e2,rgb(193, 218, 243)); /* Bluish gradient */
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
+
     .grid-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -41,37 +43,47 @@ import { Component } from '@angular/core';
       padding: 0 1rem;
       align-items: center;
       justify-items: center;
+      position: relative;
+      z-index: 1; /* Ensure grid content stays above the overlay */
     }
+
     .video-container {
       display: flex;
       justify-content: space-between;
       flex-direction: column;
       align-items: center;
+      position: relative;
+      width: 100%;
     }
+
     .hero-video {
       border-radius: 15px;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      max-height: 20vh;
+      width: 100%; /* Full width */
+      height: 35vh; /* 60% of the viewport height */
       object-fit: cover;
     }
     .text-container {
       text-align: center;
+      color: white;
+      text-shadow: 2px 2px 10px rgba(117, 115, 115, 0.7); /* Strong shadow for better contrast */
     }
     .hero-title {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: 700;
-      color: white;
       text-transform: uppercase;
     }
+
     .hero-subtitle {
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       font-weight: 600;
-      color: white;
       margin-top: 1rem;
     }
+
     .fade-in {
       animation: fadeIn 1s ease-in-out forwards;
     }
+
     @keyframes fadeIn {
       0% {
         opacity: 0;
@@ -82,6 +94,8 @@ import { Component } from '@angular/core';
         transform: translateY(0);
       }
     }
+
+    /* Media Query for smaller screens */
     @media (max-width: 768px) {
       .grid-container {
         grid-template-columns: 1fr;
@@ -91,6 +105,9 @@ import { Component } from '@angular/core';
       }
       .hero-subtitle {
         font-size: 1rem;
+      }
+      .hero-video {
+        height: 50vh; /* Adjust height for smaller screens */
       }
     }
   `]

@@ -44,7 +44,7 @@ import { Component } from '@angular/core';
 
       .nav-links a {
         text-decoration: none;
-        color: #000; /* Black */
+        color: rgb(12, 69, 122); /* Black */
         font-size: 1.125rem; /* text-lg */
         font-weight: 700; /* font-bold */
         text-transform: uppercase; /* Uppercase */
@@ -52,7 +52,7 @@ import { Component } from '@angular/core';
       }
 
       .nav-links a:hover {
-        color: #0066cc; /* Darker Blue on hover */
+        color:rgb(255, 255, 255); /* Darker Blue on hover */
       }
     `,
   ],

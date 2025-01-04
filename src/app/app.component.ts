@@ -5,7 +5,7 @@ import { HeroComponent } from './components/hero/hero.component';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, NavbarComponent, HeroComponent],
-  template: `<app-navbar /> <app-hero />`,
+  template: `<app-navbar /><app-hero />`,
   styles: [],
 })
 export class AppComponent {
