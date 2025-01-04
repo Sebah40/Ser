@@ -26,7 +26,7 @@ import { Component } from '@angular/core';
   `,
   styles: [`
     .hero-container {
-      background: linear-gradient(to bottom right, #4a90e2,rgb(193, 218, 243)); /* Bluish gradient */
+      background: linear-gradient(to bottom right, #4a90e2,rgb(193, 218, 243));
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -44,7 +44,7 @@ import { Component } from '@angular/core';
       align-items: center;
       justify-items: center;
       position: relative;
-      z-index: 1; /* Ensure grid content stays above the overlay */
+      z-index: 1;
     }
 
     .video-container {
@@ -59,8 +59,8 @@ import { Component } from '@angular/core';
     .hero-video {
       border-radius: 15px;
       box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
-      width: 100%; /* Full width */
-      height: 35vh; /* 60% of the viewport height */
+      width: 100%;
+      height: 35vh;
       object-fit: cover;
     }
     .text-container {
