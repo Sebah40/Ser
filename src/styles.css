@@ -1,8 +1,8 @@
 body {
-    font-family: 'Roboto', sans-serif;
-  }
+  font-family: "Roboto", sans-serif;
+}
 
-  /* Reset margins and padding for all elements */
+/* Reset margins and padding for all elements */
 *,
 *::before,
 *::after {
@@ -12,6 +12,10 @@ body {
 }
 
 /* Ensure the body takes up the full height of the viewport */
-html, body {
-  height: 100%;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
 }
