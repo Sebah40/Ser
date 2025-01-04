@@ -21,7 +21,7 @@ import { Component } from '@angular/core';
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #add8e6; /* Light Blue */
+        background-color:rgb(208, 228, 235); /* Light Blue */
         padding: 15px 30px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }

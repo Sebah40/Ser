@@ -58,7 +58,7 @@ import { Component } from '@angular/core';
 
     .hero-video {
       border-radius: 15px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
       width: 100%; /* Full width */
       height: 35vh; /* 60% of the viewport height */
       object-fit: cover;
@@ -66,7 +66,7 @@ import { Component } from '@angular/core';
     .text-container {
       text-align: center;
       color: white;
-      text-shadow: 2px 2px 10px rgba(117, 115, 115, 0.7); /* Strong shadow for better contrast */
+      text-shadow: 2px 2px 10px rgba(166, 160, 192, 0);
     }
     .hero-title {
       font-size: 3rem;
@@ -95,7 +95,6 @@ import { Component } from '@angular/core';
       }
     }
 
-    /* Media Query for smaller screens */
     @media (max-width: 768px) {
       .grid-container {
         grid-template-columns: 1fr;
@@ -107,7 +106,7 @@ import { Component } from '@angular/core';
         font-size: 1rem;
       }
       .hero-video {
-        height: 50vh; /* Adjust height for smaller screens */
+        height: 20vh;
       }
     }
   `]
