@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   template: `
     <nav class="navbar">
       <div class="logo">
-        <img src="./logo.png" alt="Logo" class="logo-img" />
+        <img src="./logo-color.svg" alt="Logo" class="logo-img" />
       </div>
       <ul class="nav-links">
         <li><a href="#">Inicio</a></li>
