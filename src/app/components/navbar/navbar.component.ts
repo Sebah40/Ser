@@ -12,8 +12,24 @@ import { CommonModule } from '@angular/common';
         <div class="logo">
           <img src="./logo-white.svg" alt="Logo" class="logo-img" />
         </div>
-        <ul class="nav-links">
-          <li><a href="#" class="nav-link">Inicio</a></li>
+
+        <div class="menu-toggle" (click)="toggleMenu()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </div>
+
+        <ul class="nav-links" [class.open]="menuOpen">
+          <li><a href="/" class="nav-link">Inicio</a></li>
           <li class="dropdown">
             <a
               href="#"
@@ -44,13 +60,19 @@ import { CommonModule } from '@angular/common';
               (mouseenter)="toggleDropdown()"
               (mouseleave)="toggleDropdown()"
             >
-              <a href="#" class="dropdown-item">On Grid</a>
-              <a href="#" class="dropdown-item">Off Grid</a>
-              <a href="#" class="dropdown-item">Bombeo</a>
+              <a href="pdfs/on-grid.pdf" class="dropdown-item" target="_blank"
+                >On Grid</a
+              >
+              <a href="pdfs/off-grid.pdf" class="dropdown-item" target="_blank"
+                >Off Grid</a
+              >
+              <a href="pdfs/bombeo.pdf" class="dropdown-item" target="_blank"
+                >Bombeo</a
+              >
             </div>
           </li>
           <li><a href="#" class="nav-link">Personal</a></li>
-          <li><a href="#" class="nav-link">Contacto</a></li>
+          <li><a href="#contacto" class="nav-link">Contacto</a></li>
           <li>
             <a
               href="https://tienda.rigelec.com.ar/?product_cat=8-kits-solares"
@@ -82,6 +104,7 @@ import { CommonModule } from '@angular/common';
       </div>
     </nav>
   `,
+
   styles: [
     `
       .navbar {
@@ -222,6 +245,60 @@ import { CommonModule } from '@angular/common';
         transform: translateY(-1px);
       }
 
+      .menu-toggle {
+        display: none;
+        cursor: pointer;
+      }
+
+      /* Mostrar el icono en pantallas pequeñas */
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: block;
+        }
+
+        .nav-links {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          background: rgba(208, 228, 235, 0.9);
+          position: absolute;
+          top: 80px;
+          left: 0;
+          padding: 1rem 0;
+          gap: 1rem;
+          align-items: center;
+          transition: all 0.3s ease;
+        }
+
+        /* Mostrar enlaces cuando el menú está abierto */
+        .nav-links.open {
+          display: flex;
+        }
+
+        .nav-link {
+          font-size: 1rem;
+          padding: 0.5rem;
+        }
+
+        .store-button {
+          padding: 0.5rem 1.25rem;
+          font-size: 1rem;
+        }
+      }
+
+      /* Cambios adicionales en la apariencia de los enlaces */
+      @media (max-width: 768px) {
+        .nav-links {
+          padding-left: 0;
+        }
+
+        .nav-link {
+          text-align: center;
+          width: 100%;
+          padding: 1rem;
+        }
+      }
+
       @media (max-width: 768px) {
         .navbar-content {
           padding: 0 1rem;
@@ -246,6 +323,7 @@ import { CommonModule } from '@angular/common';
 export class NavbarComponent {
   isScrolled = false;
   isDropdownOpen = false;
+  menuOpen = false;
 
   constructor() {
     window.addEventListener('scroll', () => {
@@ -255,5 +333,9 @@ export class NavbarComponent {
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen; // Alternar la visibilidad del menú
   }
 }

@@ -12,7 +12,11 @@ import { CommonModule } from '@angular/common';
         <div class="text-container fade-in">
           <h1 class="hero-title">{{ hero.title }}</h1>
           <h2 class="hero-subtitle">{{ hero.subtitle }}</h2>
-          <button class="cta-button fade-in" style="animation-delay: 0.3s;">
+          <button
+            class="cta-button fade-in"
+            style="animation-delay: 0.3s;"
+            (click)="scrollToContacto()"
+          >
             Contáctanos
           </button>
         </div>
@@ -137,4 +141,10 @@ export class HeroComponent {
     subtitle:
       'Somos una empresa especializada en instalación de paneles solares y energía renovable. ¡Transformamos tu energía hacia un futuro más sostenible!',
   };
+  scrollToContacto() {
+    const contactoSection = document.querySelector('#contacto');
+    if (contactoSection) {
+      contactoSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 }

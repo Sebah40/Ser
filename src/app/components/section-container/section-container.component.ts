@@ -4,6 +4,8 @@ import { HeroComponent } from '../hero/hero.component';
 import { AboutComponent } from '../about/about.component';
 import { CommonModule } from '@angular/common';
 import { SolucionesComponent } from '../soluciones/soluciones.component';
+import { ClientesComponent } from '../clientes/clientes.component';
+import { ContactoComponent } from '../contacto/contacto.component';
 @Component({
   selector: 'app-section-container',
   standalone: true,
@@ -13,6 +15,8 @@ import { SolucionesComponent } from '../soluciones/soluciones.component';
     NavbarComponent,
     HeroComponent,
     AboutComponent,
+    ClientesComponent,
+    ContactoComponent,
   ],
   template: `
     <div class="snap-container">
@@ -25,6 +29,12 @@ import { SolucionesComponent } from '../soluciones/soluciones.component';
       </section>
       <section class="snap-section">
         <app-soluciones></app-soluciones>
+      </section>
+      <section class="snap-section">
+        <app-clientes></app-clientes>
+      </section>
+      <section class="snap-section">
+        <app-contacto></app-contacto>
       </section>
     </div>
   `,
