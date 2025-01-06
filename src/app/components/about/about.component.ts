@@ -138,44 +138,68 @@ import { trigger, transition, style, animate } from '@angular/animations';
   `,
   styles: [
     `
-      .about-section {
-        position: relative;
-        min-height: 160vh; /* Increased height to ensure more space */
-        height: auto; /* Let it expand naturally */
-        width: 100%;
-        background: url('/about.jpg') center center;
-        background-attachment: fixed;
-        background-size: cover;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        margin-bottom: 5vh; /* Added margin to prevent overlap with next section */
-      }
+    html, body {
+    height: 100%;
+    margin: 0;
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+}
 
-      .overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(
-          135deg,
-          rgba(0, 0, 0, 0.8) 0%,
-          rgba(0, 0, 0, 0.6) 100%
-        );
-      }
+.about-section {
+    position: relative;
+    min-height: 100vh;  /* Keeps the section at least the height of the viewport */
+    height: auto;       /* Allow the section to grow naturally based on content */
+    width: 100%;
+    background: url('/about.jpg') center center;
+    background-attachment: fixed;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 5vh;  /* Adds space between this section and the next */
+    scroll-snap-align: start;  /* Ensures the section aligns correctly when scrolling */
+}
 
-      .content-container {
-        position: relative;
-        z-index: 2;
-        max-width: 1200px;
-        width: 100%;
-        padding: 4rem 2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 3rem;
-      }
+@media (max-width: 900px) {
+    .about-section {
+        min-height: 80vh;  /* Reduces the height on smaller screens */
+        padding: 2rem;     /* Adds padding to prevent text from touching the edges */
+        background-position: center center;
+        margin-bottom: 4vh;  /* Slightly reduced margin for smaller screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .about-section {
+        padding: 1rem;  /* Reduces padding for very small screens */
+        margin-bottom: 4vh;  /* Consistent margin for very small screens */
+    }
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.8) 0%,
+        rgba(0, 0, 0, 0.6) 100%
+    );
+}
+
+.content-container {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    width: 100%;
+    padding: 4rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
 
       .text-content {
         max-width: 700px;
@@ -481,7 +505,7 @@ export class AboutComponent implements OnInit {
   tabContentVisible = false;
   isModalVisible = false;
   stats = [
-    { value: '20+', label: 'Clientes Satisfechos' },
+    { value: '100+', label: 'Clientes Satisfechos' },
     { value: '10+', label: 'Años de Experiencia' },
   ];
 

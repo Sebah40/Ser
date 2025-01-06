@@ -71,7 +71,6 @@ import { CommonModule } from '@angular/common';
               >
             </div>
           </li>
-          <li><a href="#" class="nav-link">Personal</a></li>
           <li><a href="#contacto" class="nav-link">Contacto</a></li>
           <li>
             <a

@@ -28,7 +28,7 @@ import { ContactoComponent } from '../contacto/contacto.component';
       <section class="snap-nosection">
         <app-about class="no-snap"></app-about>
       </section>
-      <section class="snap-section">
+      <section class="snap-nosection">
         <app-soluciones></app-soluciones>
       </section>
       <section class="snap-section">
@@ -58,7 +58,6 @@ import { ContactoComponent } from '../contacto/contacto.component';
       .snap-nosection {
         scroll-snap-align: start;
         scroll-snap-stop: always;
-        height: 170vh;
         position: relative;
       }
 
