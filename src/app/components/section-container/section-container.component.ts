@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { SolucionesComponent } from '../soluciones/soluciones.component';
 import { ClientesComponent } from '../clientes/clientes.component';
 import { ContactoComponent } from '../contacto/contacto.component';
+
 @Component({
   selector: 'app-section-container',
   standalone: true,
@@ -24,8 +25,8 @@ import { ContactoComponent } from '../contacto/contacto.component';
       <section class="snap-section">
         <app-hero></app-hero>
       </section>
-      <section class="snap-section">
-        <app-about></app-about>
+      <section class="snap-nosection">
+        <app-about class="no-snap"></app-about>
       </section>
       <section class="snap-section">
         <app-soluciones></app-soluciones>
@@ -54,6 +55,13 @@ import { ContactoComponent } from '../contacto/contacto.component';
         position: relative;
       }
 
+      .snap-nosection {
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        height: 170vh;
+        position: relative;
+      }
+
       .snap-container::-webkit-scrollbar {
         display: none;
       }
@@ -62,6 +70,12 @@ import { ContactoComponent } from '../contacto/contacto.component';
         -ms-overflow-style: none;
         scrollbar-width: none;
         scroll-behavior: smooth;
+      }
+
+      /* Disable scroll snap and give more space to the about section */
+      .no-snap {
+        scroll-snap-align: none; /* Disable scroll snap */
+        height: 120vh; /* Increase height to give more space */
       }
     `,
   ],
