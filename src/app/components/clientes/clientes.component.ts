@@ -44,11 +44,6 @@ interface ClientReview {
             </div>
           </div>
         </div>
-
-        <div class="scroll-indicator">
-          <span>Desliza para ver más</span>
-          <div class="scroll-arrow">→</div>
-        </div>
       </div>
     </section>
   `,

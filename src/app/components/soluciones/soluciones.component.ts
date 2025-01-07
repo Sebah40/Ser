@@ -47,7 +47,7 @@ import {
             <i class="fas fa-search"></i>
             <input 
               type="text" 
-              placeholder="Busca tu solución ideal..." 
+              placeholder="Buscador en desarrollo..." 
               (input)="filterSolutions($event)"
             >
           </div>
@@ -573,7 +573,7 @@ export class SolutionsComponent implements OnInit {
         { value: '80%', label: 'Ahorro' },
         { value: '5+', label: 'Años ROI' },
         { value: '0', label: 'Mantenimiento' },
-        { value: '25+', label: 'Años garantía' }
+        { value: '10+', label: 'Años de vida útil' }
       ]
     },
     {
@@ -587,7 +587,7 @@ export class SolutionsComponent implements OnInit {
         { value: '100%', label: 'Solar' },
         { value: '8h', label: 'Bombeo diario' },
         { value: '40m', label: 'Altura máx.' },
-        { value: '10+', label: 'Años de vida' }
+        { value: '10+', label: 'Años de vida útil' }
       ]
     }
   ];

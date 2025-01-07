@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';  // <-- Import Router
 import { BlogService } from '../../services/blog.service';
 // Interfaces
 interface BlogPost {
@@ -28,7 +28,11 @@ interface BlogPost {
   template: `
     <section class="blog-section">
       <!-- Header -->
+      <button (click)="goBack()" class="back-button">
+  <i class="fas fa-arrow-left"></i> Volver a la página principal
+</button>
       <div class="blog-header">
+        
         <h1>Obras realizadas</h1>
         <!-- <p class="subtitle">Descubre nuestros últimos trabajos y mantente informado sobre energía solar</p> -->
         <p class="subtitle">En desarrollo</p>
@@ -44,6 +48,7 @@ interface BlogPost {
               (input)="filterPosts()"
             >
           </div>
+          
           
           <div class="category-filters">
             <button 
@@ -139,6 +144,24 @@ interface BlogPost {
       text-align: center;
       margin-bottom: 3rem;
     }
+
+    .back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color, #4CAF50);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.back-button:hover {
+  background: var(--primary-dark, #45a049);
+}
+
 
     .blog-header h1 {
       font-size: 2.5rem;
@@ -392,7 +415,7 @@ export class BlogComponent implements OnInit {
   loading: boolean = false;
   currentPage: number = 1;
 
-  constructor(private blogService: BlogService) {}
+  constructor(private blogService: BlogService, private router: Router) {}
 
   ngOnInit() {
     this.loadPosts();
@@ -437,6 +460,10 @@ export class BlogComponent implements OnInit {
   selectCategory(category: string) {
     this.selectedCategory = category;
     this.filterPosts();
+  }
+
+  goBack() {
+    this.router.navigate(['/']); // Navigate to the root (home) page
   }
 
   loadMorePosts() {

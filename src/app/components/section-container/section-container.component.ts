@@ -7,6 +7,7 @@ import { SolutionsComponent } from '../soluciones/soluciones.component';
 import { ClientesComponent } from '../clientes/clientes.component';
 import { ContactoComponent } from '../contacto/contacto.component';
 import { SolutionFinderComponent } from "../solution-finder/solution-finder.component";
+import { EnergiaComponent } from "../energia/energia.component";
 
 @Component({
   selector: 'app-section-container',
@@ -20,6 +21,7 @@ import { SolutionFinderComponent } from "../solution-finder/solution-finder.comp
     ClientesComponent,
     ContactoComponent,
     SolutionFinderComponent,
+    EnergiaComponent
 ],
   template: `
     <div class="snap-container">
@@ -35,6 +37,9 @@ import { SolutionFinderComponent } from "../solution-finder/solution-finder.comp
       </section>
       <section class="snap-nosection" *ngIf="showSolutionFinderVisible">
         <app-solution-finder></app-solution-finder>
+      </section>
+      <section class="snap-nosection">
+        <app-energia></app-energia>
       </section>
       <section class="snap-section">
         <app-clientes></app-clientes>
