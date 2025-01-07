@@ -74,7 +74,7 @@ interface ClientReview {
         bottom: 0;
         background: linear-gradient(
           to bottom,
-          rgba(0, 0, 0, 0.7) 0%,
+          rgba(255, 255, 255, 0.2) 0%,
           rgba(0, 0, 0, 0.8) 100%
         );
         display: flex;

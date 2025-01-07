@@ -15,11 +15,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
           <h2 class="title">Sobre nosotros</h2>
           <div class="divider"></div>
           <p class="description">
-            Ofrecemos soluciones personalizadas que se adaptan a las necesidades
-            únicas de cada cliente. Nuestro enfoque personalizado y equipo
-            experto garantiza resultados excepcionales que superan las
-            expectativas. Trabajamos estrechamente contigo para impulsar tu
-            éxito con soluciones efectivas y eficientes.
+          Brindamos asesoría, consultoría e instalación de soluciones con el propósito de proporcionar servicios enfocados en eficiencia energética, reducción de consumo y aprovechamiento óptimo de la energía.
           </p>
 
           <!-- Modal Component HTML -->
@@ -185,7 +181,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
     bottom: 0;
     background: linear-gradient(
         135deg,
-        rgba(0, 0, 0, 0.8) 0%,
+        rgba(255, 255, 255, 0.28) 0%,
         rgba(0, 0, 0, 0.6) 100%
     );
 }
@@ -505,16 +501,16 @@ export class AboutComponent implements OnInit {
   tabContentVisible = false;
   isModalVisible = false;
   stats = [
-    { value: '100+', label: 'Clientes Satisfechos' },
-    { value: '10+', label: 'Años de Experiencia' },
+    { value: '+500 kW', label: 'Paneles solares instalados' },
+    { value: '+100 kWh', label: 'Baterías para sistemas aislados en el campo' },
   ];
 
   tabs = [
     {
       id: 'vision',
-      title: 'Nuestra Visión',
+      title: '¿Quienes somos?',
       content:
-        'Aspiramos a ser líderes en la zona en soluciones innovadoras, transformando desafíos en oportunidades.',
+        'SER es una compañía del grupo RIGELEC, dedicada a ofrecer servicios de asesoría, consultoría e instalación de soluciones vinculadas a la eficiencia energética, ahorro de energía y uso responsable de los recursos energéticos. Fundada en 2017 como Rigelec Renovables, en 2021 decidimos constituir SER como una unidad independiente, con el fin de proporcionar a nuestros clientes una gama más amplia y mejorada de soluciones.',
     },
     {
       id: 'mission',

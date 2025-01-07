@@ -103,6 +103,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
   --text-dark: #333333;
   --transition-speed: 0.4s;
 }
+html, body {
+  height: 100%;
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  overflow: hidden; /* Prevent scrolling the body */
+}
 
 .dark-mode {
   --primary-color: #0056b3;
@@ -198,6 +204,10 @@ import { trigger, transition, style, animate } from '@angular/animations';
   padding: 2rem;
   transition: opacity var(--transition-speed), transform var(--transition-speed);
   pointer-events: none;
+}
+
+.overlay .button-group {
+  pointer-events: auto; /* Allows interaction with buttons */
 }
 
 .content-wrapper {

@@ -44,8 +44,10 @@ import { ContactoComponent } from '../contacto/contacto.component';
       .snap-container {
         height: 100vh;
         overflow-y: scroll;
-        scroll-snap-type: y mandatory;
+        /*scroll-snap-type: y mandatory;*/
         position: relative;
+        padding-top: 60px; /* Adjust according to navbar height */
+        scroll-behavior: smooth;
       }
 
       .snap-section {
@@ -68,7 +70,6 @@ import { ContactoComponent } from '../contacto/contacto.component';
       .snap-container {
         -ms-overflow-style: none;
         scrollbar-width: none;
-        scroll-behavior: smooth;
       }
 
       /* Disable scroll snap and give more space to the about section */

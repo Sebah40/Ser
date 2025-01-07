@@ -30,47 +30,6 @@ import { CommonModule } from '@angular/common';
 
         <ul class="nav-links" [class.open]="menuOpen">
           <li><a href="/" class="nav-link">Inicio</a></li>
-          <li class="dropdown">
-            <a
-              href="#"
-              class="nav-link"
-              (mouseenter)="toggleDropdown()"
-              (mouseleave)="toggleDropdown()"
-            >
-              Kits
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="chevron"
-                [class.rotate]="isDropdownOpen"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </a>
-            <div
-              class="dropdown-menu"
-              [class.active]="isDropdownOpen"
-              (mouseenter)="toggleDropdown()"
-              (mouseleave)="toggleDropdown()"
-            >
-              <a href="pdfs/on-grid.pdf" class="dropdown-item" target="_blank"
-                >On Grid</a
-              >
-              <a href="pdfs/off-grid.pdf" class="dropdown-item" target="_blank"
-                >Off Grid</a
-              >
-              <a href="pdfs/bombeo.pdf" class="dropdown-item" target="_blank"
-                >Bombeo</a
-              >
-            </div>
-          </li>
           <li><a href="#contacto" class="nav-link">Contacto</a></li>
           <li>
             <a
@@ -114,7 +73,7 @@ import { CommonModule } from '@angular/common';
         z-index: 1000;
         transition: all 0.3s ease;
         padding: 1rem 0;
-        background: rgba(208, 228, 235, 0.3);
+        background: rgba(208, 228, 235, 0.8);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
       }

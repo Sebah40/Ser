@@ -30,7 +30,7 @@ import { CommonModule } from '@angular/common';
         height: 100vh;
         width: 100%;
         position: relative;
-        background: url('/background.jpeg') center center;
+        background: url('/background.jpg') center center;
         background-attachment: fixed;
         background-size: cover;
         display: flex;
@@ -47,8 +47,8 @@ import { CommonModule } from '@angular/common';
         bottom: 0;
         background: linear-gradient(
           135deg,
-          rgba(0, 0, 0, 0.7) 0%,
-          rgba(0, 0, 0, 0.5) 100%
+          rgba(255, 255, 255, 0.27) 0%,
+          rgba(0, 0, 0, 0.3) 50%
         );
         z-index: 1;
       }
