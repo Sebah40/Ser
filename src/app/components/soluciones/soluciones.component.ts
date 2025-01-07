@@ -51,6 +51,12 @@ import {
               (input)="filterSolutions($event)"
             >
           </div>
+          <div class="solutions-footer">
+        <button class="finder-button" (click)="onSolutionFinderClick()">
+          <i class="fas fa-lightbulb"></i>
+          Encuentra tu Solución Ideal
+        </button>
+      </div>
         </div>
       </div>
 
@@ -101,13 +107,6 @@ import {
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="solutions-footer">
-        <button class="finder-button" (click)="onSolutionFinderClick()">
-          <i class="fas fa-lightbulb"></i>
-          Encuentra tu Solución Ideal
-        </button>
       </div>
 
       <!-- Details Modal -->
