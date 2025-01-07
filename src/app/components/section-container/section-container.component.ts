@@ -3,7 +3,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { HeroComponent } from '../hero/hero.component';
 import { AboutComponent } from '../about/about.component';
 import { CommonModule } from '@angular/common';
-import { SolucionesComponent } from '../soluciones/soluciones.component';
+import { SolutionsComponent } from '../soluciones/soluciones.component';
 import { ClientesComponent } from '../clientes/clientes.component';
 import { ContactoComponent } from '../contacto/contacto.component';
 import { SolutionFinderComponent } from "../solution-finder/solution-finder.component";
@@ -13,14 +13,14 @@ import { SolutionFinderComponent } from "../solution-finder/solution-finder.comp
   standalone: true,
   imports: [
     CommonModule,
-    SolucionesComponent,
+    SolutionsComponent,
     NavbarComponent,
     HeroComponent,
     AboutComponent,
     ClientesComponent,
     ContactoComponent,
-    SolutionFinderComponent
-  ],
+    SolutionFinderComponent,
+],
   template: `
     <div class="snap-container">
       <app-navbar></app-navbar>
@@ -31,7 +31,7 @@ import { SolutionFinderComponent } from "../solution-finder/solution-finder.comp
         <app-about class="no-snap"></app-about>
       </section>
       <section class="snap-nosection">
-        <app-soluciones (solutionFinderClicked)="showSolutionFinder()"></app-soluciones>
+        <app-solutions (solutionFinderClicked)="showSolutionFinder()"></app-solutions>
       </section>
       <section class="snap-nosection" *ngIf="showSolutionFinderVisible">
         <app-solution-finder></app-solution-finder>

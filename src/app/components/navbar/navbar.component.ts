@@ -7,10 +7,10 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
 
   template: `
-    <nav class="navbar" [class.scrolled]="isScrolled">
+    <nav class="navbar" [class.hidden]="isHidden">
       <div class="navbar-content">
         <div class="logo">
-          <img src="./logo-white.svg" alt="Logo" class="logo-img" />
+          <img src="./logo-color.svg" alt="Logo" class="logo-img" />
         </div>
 
         <div class="menu-toggle" (click)="toggleMenu()">
@@ -31,6 +31,7 @@ import { CommonModule } from '@angular/common';
         <ul class="nav-links" [class.open]="menuOpen">
           <li><a href="/" class="nav-link">Inicio</a></li>
           <li><a href="#contacto" class="nav-link">Contacto</a></li>
+          <li><a href="/blog" class="nav-link">Obras realizadas</a></li> <!-- Added Blog button -->
           <li>
             <a
               href="https://tienda.rigelec.com.ar/?product_cat=8-kits-solares"
@@ -65,17 +66,27 @@ import { CommonModule } from '@angular/common';
 
   styles: [
     `
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
       .navbar {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 1000;
-        transition: all 0.3s ease;
+        transition: transform 0.3s ease, opacity 0.3s ease;
         padding: 1rem 0;
         background: rgba(208, 228, 235, 0.8);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
+      }
+
+      .navbar.hidden {
+        transform: translateY(-100%);
+        opacity: 0;
       }
 
       .navbar-content {
@@ -124,56 +135,6 @@ import { CommonModule } from '@angular/common';
         transform: translateY(-1px);
       }
 
-      .chevron {
-        transition: transform 0.3s ease;
-      }
-
-      .chevron.rotate {
-        transform: rotate(180deg);
-      }
-
-      .dropdown {
-        position: relative;
-      }
-
-      .dropdown-menu {
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%) translateY(10px);
-        background: rgba(208, 228, 235, 0.95);
-        border-radius: 0.5rem;
-        padding: 0.5rem;
-        min-width: 200px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-          0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-      }
-
-      .dropdown-menu.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(-50%) translateY(0);
-      }
-
-      .dropdown-item {
-        display: block;
-        padding: 0.75rem 1rem;
-        color: #0c457a;
-        text-decoration: none;
-        font-size: 0.875rem;
-        font-weight: 500;
-        border-radius: 0.25rem;
-        transition: all 0.2s ease;
-      }
-
-      .dropdown-item:hover {
-        background: rgba(12, 69, 122, 0.1);
-      }
       .store-button {
         display: flex;
         align-items: center;
@@ -208,7 +169,6 @@ import { CommonModule } from '@angular/common';
         cursor: pointer;
       }
 
-      /* Mostrar el icono en pantallas pequeñas */
       @media (max-width: 768px) {
         .menu-toggle {
           display: block;
@@ -228,7 +188,6 @@ import { CommonModule } from '@angular/common';
           transition: all 0.3s ease;
         }
 
-        /* Mostrar enlaces cuando el menú está abierto */
         .nav-links.open {
           display: flex;
         }
@@ -243,57 +202,34 @@ import { CommonModule } from '@angular/common';
           font-size: 1rem;
         }
       }
-
-      /* Cambios adicionales en la apariencia de los enlaces */
-      @media (max-width: 768px) {
-        .nav-links {
-          padding-left: 0;
-        }
-
-        .nav-link {
-          text-align: center;
-          width: 100%;
-          padding: 1rem;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .navbar-content {
-          padding: 0 1rem;
-        }
-
-        .nav-links {
-          gap: 1rem;
-        }
-
-        .nav-link {
-          font-size: 0.875rem;
-          padding: 0.5rem;
-        }
-        .store-button {
-          padding: 0.4rem 1rem;
-          font-size: 0.875rem;
-        }
-      }
-    `,
-  ],
+    `
+  ]
 })
 export class NavbarComponent {
-  isScrolled = false;
-  isDropdownOpen = false;
+  isHidden = false;
+  lastScrollTop = 0;
+
   menuOpen = false;
 
   constructor() {
-    window.addEventListener('scroll', () => {
-      this.isScrolled = window.scrollY > 20;
-    });
+    window.addEventListener('scroll', this.onScroll.bind(this));
   }
 
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
+  onScroll() {
+    const scrollTop = window.scrollY;
+
+    if (scrollTop > this.lastScrollTop && scrollTop > 50) {
+      // Scrolling down, hide navbar
+      this.isHidden = true;
+    } else if (scrollTop < this.lastScrollTop) {
+      // Scrolling up, show navbar
+      this.isHidden = false;
+    }
+
+    this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Prevent negative scroll
   }
 
   toggleMenu() {
-    this.menuOpen = !this.menuOpen; // Alternar la visibilidad del menú
+    this.menuOpen = !this.menuOpen; // Toggle the visibility of the menu
   }
 }

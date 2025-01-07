@@ -215,7 +215,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
       .title {
         font-size: 2.5rem;
-        color: #0c457a;
+        color:#0c457a;
         margin-bottom: 1.5rem;
         font-weight: 700;
       }

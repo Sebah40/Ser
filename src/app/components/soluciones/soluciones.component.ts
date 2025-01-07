@@ -1,402 +1,557 @@
-import { Component,Output, OnInit, HostListener, EventEmitter } from '@angular/core';
+import { Component, Output, OnInit, HostListener, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { 
+  trigger, 
+  transition, 
+  style, 
+  animate, 
+  state 
+} from '@angular/animations';
 
 @Component({
-  selector: 'app-soluciones',
+  selector: 'app-solutions',
   standalone: true,
   imports: [CommonModule],
   animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('300ms ease-in', style({ opacity: 1 })),
-      ]),
-      transition(':leave', [animate('300ms ease-out', style({ opacity: 0 }))]),
+    trigger('cardAnimation', [
+      state('void', style({ 
+        opacity: 0, 
+        transform: 'translateY(30px)' 
+      })),
+      state('*', style({ 
+        opacity: 1, 
+        transform: 'translateY(0)' 
+      })),
+      transition('void => *', [
+        animate('600ms cubic-bezier(0.35, 0, 0.25, 1)')
+      ])
     ]),
+    trigger('fadeScale', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.95)' }),
+        animate('200ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0, transform: 'scale(0.95)' }))
+      ])
+    ])
   ],
   template: `
-    <section class="solutions-container" [class.dark-mode]="isDarkMode">
-      <div class="header-section">
-        <h1 class="section-title">Nuestras soluciones</h1>
-        <p class="subtitle">Descubre las mejores soluciones en energía solar</p>
+    <section class="solutions-wrapper">
+      <div class="solutions-header">
+        <div class="header-content" @cardAnimation>
+          <h1 class="gradient-text">Soluciones Energéticas</h1>
+          <p class="subtitle">Descubre el poder de la energía solar para tu hogar o negocio</p>
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input 
+              type="text" 
+              placeholder="Busca tu solución ideal..." 
+              (input)="filterSolutions($event)"
+            >
+          </div>
+        </div>
       </div>
 
       <div class="solutions-grid">
-  <div
-    *ngFor="let solution of solutions"
-    class="solution-panel"
-    (mouseenter)="onMouseEnter(solution.id)"
-    (mouseleave)="onMouseLeave()"
-    [@fadeInOut]
-  >
-    <div
-      class="background-image"
-      [style.backgroundImage]="'url(' + solution.image + ')'"
-    >
-      <div class="stats-overlay" *ngIf="activePanel === solution.id">
-        <div class="stat-item" *ngFor="let stat of solution.stats">
-          <span class="stat-value">{{ stat.value }}</span>
-          <span class="stat-label">{{ stat.label }}</span>
+        <div 
+          *ngFor="let solution of filteredSolutions" 
+          class="solution-card" 
+          [class.active]="activeCard === solution.id"
+          (mouseenter)="!isTouchDevice && setActiveCard(solution.id)"
+          (mouseleave)="!isTouchDevice && clearActiveCard()"
+          (click)="handleCardClick(solution.id)"
+          @cardAnimation
+        >
+          <div class="card-media" [style.backgroundImage]="'url(' + solution.image + ')'">
+            <div class="card-overlay">
+              <div class="stats-grid" *ngIf="showStats(solution.id)">
+                <div class="stat-box" *ngFor="let stat of solution.stats">
+                  <span class="stat-value">{{stat.value}}</span>
+                  <span class="stat-label">{{stat.label}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-content">
+            <h2 class="card-title">{{solution.title}}</h2>
+            <p class="card-description" [class.show]="showDescription(solution.id)">
+              {{solution.description}}
+            </p>
+            
+            <div class="card-actions" [class.show]="showActions(solution.id)">
+              <button 
+                class="action-button primary"
+                (click)="openDetails(solution.id, $event)"
+              >
+                <i class="fas fa-info-circle"></i>
+                Más Información
+              </button>
+              <a 
+                [href]="solution.storeUrl"
+                target="_blank"
+                class="action-button secondary"
+                (click)="$event.stopPropagation()"
+              >
+                <i class="fas fa-shopping-cart"></i>
+                Tienda
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="overlay" [class.active]="activePanel === solution.id">
-      <div class="content-wrapper">
-        <h2 class="title">{{ solution.title }}</h2>
-        <p class="description">{{ solution.description }}</p>
-        <div class="button-group" [class.show]="activePanel === solution.id">
-          <button class="info-button" (click)="openSolution(solution.id)">
-            <i class="fas fa-info-circle"></i> Ver más
-          </button>
-          <a [href]="solution.storeUrl" target="_blank" class="store-button">
-            <i class="fas fa-shopping-cart"></i> Rigelec Store
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-      <div class="cta-section">
-        <button class="cta-button" (click)="onSolutionFinderClick()">
-          <i class="fas fa-lightbulb"></i> ¿Qué solución me conviene?
-        </button>
-        <button class="theme-toggle" (click)="toggleTheme()">
-          <i [class]="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+      <div class="solutions-footer">
+        <button class="finder-button" (click)="onSolutionFinderClick()">
+          <i class="fas fa-lightbulb"></i>
+          Encuentra tu Solución Ideal
         </button>
       </div>
 
-      <!-- Modal -->
-      <div class="modal" *ngIf="selectedSolution" [@fadeInOut]>
-        <div class="modal-content">
+      <!-- Details Modal -->
+      <div 
+        class="modal-overlay" 
+        *ngIf="selectedSolution" 
+        @fadeScale
+        (click)="closeModal()"
+      >
+        <div class="modal-container" (click)="$event.stopPropagation()">
           <div class="modal-header">
-            <h2>{{ modalTitle }}</h2>
+            <h3>{{modalTitle}}</h3>
             <button class="close-button" (click)="closeModal()">
               <i class="fas fa-times"></i>
             </button>
           </div>
-          <div class="modal-body">
+          <div class="modal-content">
             <iframe
               *ngIf="pdfUrl"
               [src]="pdfUrl"
               [title]="modalTitle"
-              loading="lazy"
+              loading="eager"
             ></iframe>
           </div>
         </div>
       </div>
     </section>
   `,
-  styles: [
-    `
-      /* Add Font Awesome CDN in index.html */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+  styles: [`
+    /* Modern styling with improved visuals */
+    :host {
+      --primary: #2563eb;
+      --primary-light:rgb(39, 75, 133);
+      --secondary:rgb(21, 166, 250);
+      --accent: #0c457a;
+      --background: #ffffff;
+      --surface: #f8fafc;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --radius: 1rem;
+      --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      display: block;
+      min-height: 100vh;
+    }
 
-:host {
-  --primary-color: #007bff;
-  --secondary-color: #ffd700;
-  --text-light: #ffffff;
-  --text-dark: #333333;
-  --transition-speed: 0.4s;
-}
-html, body {
-  height: 100%;
-  margin: 0; /* Remove default margin */
-  padding: 0; /* Remove default padding */
-  overflow: hidden; /* Prevent scrolling the body */
-}
+    .solutions-wrapper {
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background-color var(--transition);
+    }
 
-.dark-mode {
-  --primary-color: #0056b3;
-  --text-light: #e0e0e0;
-  background-color: #1a1a1a;
-}
+    .solutions-header {
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+      margin-bottom: 4rem;
+    }
 
-.solutions-container {
-  font-family: 'Poppins', sans-serif;
-  padding: 4rem 2rem;
-  transition: background-color var(--transition-speed);
-}
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+      color: white;
+    }
 
-.header-section {
-  text-align: center;
-  margin-bottom: 3rem;
-}
+    .gradient-text {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, white, var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-.section-title {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+    .subtitle {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
 
-.subtitle {
-  font-size: 1.2rem;
-  color: var(--text-dark);
-  opacity: 0.8;
-}
+    .search-bar {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 9999px;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow);
+    }
 
-.solutions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
+    .search-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: transparent;
+    }
 
-.solution-panel {
-  height: 400px;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    .search-bar i {
+      color: var(--text-light);
+    }
 
-.solution-panel:hover {
-  transform: translateY(-10px);
-}
+    .solutions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-.background-image {
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.2s var(--transition-speed);
-}
+    .solution-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform var(--transition), box-shadow var(--transition);
+      cursor: pointer;
+    }
 
-.stats-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 1rem;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  background: rgba(0, 0, 0, 0.7);
-}
+    .solution-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
 
-.stat-item {
-  text-align: center;
-  color: var(--text-light);
-}
+    .card-media {
+      height: 240px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
 
-.stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
 
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.8;
-}
+    .solution-card.active .card-overlay {
+      opacity: 1;
+    }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  padding: 2rem;
-  transition: opacity var(--transition-speed), transform var(--transition-speed);
-  pointer-events: none;
-}
+    .stats-grid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
 
-.overlay .button-group {
-  pointer-events: auto; /* Allows interaction with buttons */
-}
+    .stat-box {
+      text-align: center;
+      color: white;
+    }
 
-.content-wrapper {
-  color: var(--text-light);
-  transform: translateY(60px);
-  opacity: 0;
-}
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: block;
+    }
 
-.solution-panel:hover .content-wrapper {
-  transform: translateY(0);
-  opacity: 1;
-}
+    .stat-label {
+      font-size: 0.875rem;
+      opacity: 0.9;
+    }
 
-.title {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
+    .card-content {
+      padding: 1.5rem;
+    }
 
-.description {
-  opacity: 0;
-  transition: opacity var(--transition-speed);
-  margin-bottom: 1.5rem;
-}
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
 
-.solution-panel:hover .description {
-  opacity: 1;
-}
+    .card-description {
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity var(--transition), transform var(--transition);
+    }
 
-.button-group {
-  display: flex;
-  gap: 1rem;
-}
+    .card-description.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-.info-button,
-.store-button {
-  padding: 0.8rem 1.5rem;
-  border-radius: 50px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all var(--transition-speed);
-}
+    .card-actions {
+      display: flex;
+      gap: 1rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity var(--transition), transform var(--transition);
+    }
 
-.info-button {
-  background-color: transparent;
-  border: 2px solid var(--text-light);
-  color: var(--text-light);
-}
+    .card-actions.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-.store-button {
-  background-color: var(--secondary-color);
-  color: var(--text-dark);
-  text-decoration: none;
-}
+    .action-button {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: 9999px;
+      border: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
 
-.cta-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 3rem;
-}
+    .action-button.primary {
+      background: var(--primary);
+      color: white;
+    }
 
-.cta-button {
-  background-color: var(--primary-color);
-  color: var(--text-light);
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: transform var(--transition-speed), background-color var(--transition-speed);
-}
+    .action-button.primary:hover {
+      background: var(--primary-light);
+    }
 
-.cta-button:hover {
-  transform: scale(1.05);
-  background-color: #0056b3;
-}
+    .action-button.secondary {
+      background: var(--secondary);
+      color: var(--text);
+      text-decoration: none;
+    }
 
-.theme-toggle {
-  background: transparent;
-  border: none;
-  color: var(--text-dark);
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: transform var(--transition-speed);
-}
+    .action-button.secondary:hover {
+      filter: brightness(1.1);
+    }
 
-.theme-toggle:hover {
-  transform: rotate(180deg);
-}
+    .solutions-footer {
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+    }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  z-index: 1000;
-}
+    .finder-button {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: var(--shadow);
+    }
 
-.modal-content {
-  background: white;
-  border-radius: 15px;
-  width: 90vw;
-  height: 90vh;
-  max-width: 1200px;
-  overflow: hidden;
-}
+    .finder-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
 
-.modal-header {
-  padding: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-}
+    .theme-toggle {
+      background: var(--surface);
+      border: none;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 9999px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      color: var(--text);
+      box-shadow: var(--shadow);
+    }
 
-.modal-body {
-  height: calc(100% - 70px);
-}
+    .theme-toggle:hover {
+      transform: rotate(180deg);
+    }
 
-.modal-body iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      z-index: 50;
+      backdrop-filter: blur(4px);
+    }
 
-.close-button {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-  transition: color var(--transition-speed);
-}
+    .modal-container {
+      background: var(--surface);
+      border-radius: var(--radius);
+      width: min(90vw, 1200px);
+      height: 90vh;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
 
-.close-button:hover {
-  color: #000;
-}
+    .modal-header {
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgb(0 0 0 / 0.1);
+    }
 
-@media (max-width: 768px) {
-  .solutions-container {
-    padding: 2rem 1rem;
-  }
+    .modal-content {
+      height: calc(100% - 4.5rem);
+    }
 
-  .section-title {
-    font-size: 2rem;
-  }
+    .modal-content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
 
-  .solution-panel {
-    height: 300px;
-  }
+    .close-button {
+      background: transparent;
+      border: none;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      transition: all var(--transition);
+    }
 
-  .title {
-    font-size: 1.5rem;
-  }
+    .close-button:hover {
+      background: rgb(0 0 0 / 0.1);
+    }
 
-  .button-group {
-    flex-direction: column;
-  }
-}
+    @media (max-width: 768px) {
+      .gradient-text {
+        font-size: 2.5rem;
+      }
 
-    `,
-  ],
+      .solutions-header {
+        padding: 3rem 1rem;
+        clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+
+      .solutions-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+        gap: 1.5rem;
+      }
+
+      .card-media {
+        height: 200px;
+      }
+
+      .card-actions {
+        flex-direction: column;
+      }
+
+      .solutions-footer {
+        flex-direction: column;
+        padding: 1.5rem;
+      }
+
+      .finder-button, 
+      .theme-toggle {
+        width: 100%;
+      }
+
+      .search-bar {
+        margin: 0 1rem;
+      }
+
+      .modal-container {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+      }
+
+      .stat-value {
+        font-size: 1.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+      }
+
+      .action-button {
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    @media (hover: none) {
+      .solution-card:hover {
+        transform: none;
+      }
+
+      .card-description,
+      .card-actions {
+        opacity: 1;
+        transform: none;
+      }
+
+      .theme-toggle:hover {
+        transform: none;
+      }
+    }
+  `]
 })
-export class SolucionesComponent implements OnInit {
-  activePanel: string | null = null;
+export class SolutionsComponent implements OnInit {
+  activeCard: string | null = null;
   selectedSolution: string | null = null;
   modalTitle: string = '';
   pdfUrl: SafeResourceUrl | null = null;
-  isDarkMode: boolean = false;
-  private hoverTimeout: any = null;
-  @Output() solutionFinderClicked = new EventEmitter<void>();
-
+  isTouchDevice: boolean = false;
+  filteredSolutions: any[] = [];
 
   solutions = [
     {
       id: 'offgrid',
       title: 'Off Grid',
-      description: 'Soluciones completas para independencia energética total',
+      description: 'Soluciones completas para independencia energética total. Ideal para propiedades sin acceso a la red eléctrica o que buscan autosuficiencia total.',
       image: '/offgrid.jpg',
       storeUrl: 'https://tienda.rigelec.com.ar/?product_cat=b-aislados',
       pdf: '/pdfs/off-grid.pdf',
@@ -404,13 +559,13 @@ export class SolucionesComponent implements OnInit {
         { value: '100%', label: 'Autonomía' },
         { value: '24/7', label: 'Disponibilidad' },
         { value: '0', label: 'Facturas' },
-        { value: '15+', label: 'Años de vida útil' },
-      ],
+        { value: '15+', label: 'Años de vida útil' }
+      ]
     },
     {
       id: 'ongrid',
       title: 'On Grid',
-      description: 'Reduce tu factura de luz manteniendo la conexión a la red',
+      description: 'Reduce tu factura de luz manteniendo la conexión a la red. Solución perfecta para hogares y negocios que buscan ahorrar en costos energéticos.',
       image: '/ongrid.jpg',
       storeUrl: 'https://tienda.rigelec.com.ar/?product_cat=a-ahorro',
       pdf: '/pdfs/on-grid.pdf',
@@ -418,14 +573,13 @@ export class SolucionesComponent implements OnInit {
         { value: '80%', label: 'Ahorro' },
         { value: '5+', label: 'Años ROI' },
         { value: '0', label: 'Mantenimiento' },
-        { value: '3+', label: 'Años garantía' },
-      ],
+        { value: '25+', label: 'Años garantía' }
+      ]
     },
     {
       id: 'bombeo',
       title: 'Bombeo Solar',
-      description:
-        'Sistemas de bombeo eficientes alimentados por energía solar',
+      description: 'Sistemas de bombeo eficientes alimentados por energía solar. Perfecto para agricultura, riego y abastecimiento de agua en zonas rurales.',
       image: '/bombeo.jpg',
       storeUrl: 'https://tienda.rigelec.com.ar/?product_cat=e-bombeo',
       pdf: '/pdfs/bombeo.pdf',
@@ -433,54 +587,77 @@ export class SolucionesComponent implements OnInit {
         { value: '100%', label: 'Solar' },
         { value: '8h', label: 'Bombeo diario' },
         { value: '40m', label: 'Altura máx.' },
-        { value: '10+', label: 'Años de vida' },
-      ],
-    },
+        { value: '10+', label: 'Años de vida' }
+      ]
+    }
   ];
-
-  constructor(private sanitizer: DomSanitizer) {}
-
-  ngOnInit() {
-    this.checkPreferredTheme();
+  constructor(private sanitizer: DomSanitizer) {
+    this.isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    this.filteredSolutions = this.solutions;
   }
 
-  @HostListener('window:keydown.escape')
-  handleEscKey() {
-    this.closeModal();
+  ngOnInit() {  }
+
+  filterSolutions(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+    this.filteredSolutions = this.solutions.filter(solution =>
+      solution.title.toLowerCase().includes(searchTerm) ||
+      solution.description.toLowerCase().includes(searchTerm)
+    );
   }
 
-  checkPreferredTheme() {
-    this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setActiveCard(id: string): void {
+    this.activeCard = id;
   }
 
-  toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
+  clearActiveCard(): void {
+    this.activeCard = null;
   }
 
-  openSolution(solutionId: string) {
-    this.selectedSolution = solutionId;
-    const solution = this.solutions.find((sol) => sol.id === solutionId);
+  handleCardClick(id: string): void {
+    if (this.isTouchDevice) {
+      if (this.activeCard === id) {
+        this.activeCard = null;
+      } else {
+        this.activeCard = id;
+      }
+    }
+  }
+
+  showStats(id: string): boolean {
+    return this.activeCard === id;
+  }
+
+  showDescription(id: string): boolean {
+    return !this.isTouchDevice || this.activeCard === id;
+  }
+
+  showActions(id: string): boolean {
+    return !this.isTouchDevice || this.activeCard === id;
+  }
+
+  openDetails(id: string, event: Event): void {
+    event.stopPropagation();
+    const solution = this.solutions.find(s => s.id === id);
     if (solution) {
+      this.selectedSolution = id;
       this.modalTitle = solution.title;
       this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(solution.pdf);
     }
   }
 
-  closeModal() {
+  @HostListener('window:keydown.escape')
+  closeModal(): void {
     this.selectedSolution = null;
     this.pdfUrl = null;
   }
 
-  onSolutionFinderClick() {
+
+
+
+  onSolutionFinderClick(): void {
     this.solutionFinderClicked.emit();
   }
-  onMouseLeave(): void {
-    this.hoverTimeout = setTimeout(() => {
-      this.activePanel = null;
-    }, 200);
-  }
-  onMouseEnter(solutionId: string): void {
-    clearTimeout(this.hoverTimeout); 
-    this.activePanel = solutionId;
-  }
+
+  @Output() solutionFinderClicked = new EventEmitter<void>();
 }

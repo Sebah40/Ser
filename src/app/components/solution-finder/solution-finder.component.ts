@@ -194,13 +194,13 @@ interface Result {
 }
 
 .option-button:hover {
-  border-color: #4CAF50;
+  border-color: #2563eb;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .option-button.selected {
-  border-color: #4CAF50;
+  border-color: #2563eb;
   background-color: #e9f5e9;
 }
 
@@ -212,7 +212,7 @@ interface Result {
 
 .primary-button {
   padding: 1rem 2rem;
-  background-color: #4CAF50;
+  background-color: #2563eb;
   color: white;
   border: none;
   border-radius: 6px;
@@ -551,7 +551,6 @@ export class SolutionFinderComponent {
       bombeo: 0
     };
     this.refreshInfo();
-
   }
   scrollToContacto() {
     const contactoSection = document.getElementById('contacto');
