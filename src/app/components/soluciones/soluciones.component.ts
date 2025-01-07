@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component,Output, OnInit, HostListener, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -62,7 +62,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
 
       <div class="cta-section">
-        <button class="cta-button" (click)="showSolutionFinder()">
+        <button class="cta-button" (click)="onSolutionFinderClick()">
           <i class="fas fa-lightbulb"></i> ¿Qué solución me conviene?
         </button>
         <button class="theme-toggle" (click)="toggleTheme()">
@@ -389,6 +389,8 @@ export class SolucionesComponent implements OnInit {
   pdfUrl: SafeResourceUrl | null = null;
   isDarkMode: boolean = false;
   private hoverTimeout: any = null;
+  @Output() solutionFinderClicked = new EventEmitter<void>();
+
 
   solutions = [
     {
@@ -469,8 +471,8 @@ export class SolucionesComponent implements OnInit {
     this.pdfUrl = null;
   }
 
-  showSolutionFinder() {
-    console.log('Solution finder clicked');
+  onSolutionFinderClick() {
+    this.solutionFinderClicked.emit();
   }
   onMouseLeave(): void {
     this.hoverTimeout = setTimeout(() => {

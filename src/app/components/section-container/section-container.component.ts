@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { SolucionesComponent } from '../soluciones/soluciones.component';
 import { ClientesComponent } from '../clientes/clientes.component';
 import { ContactoComponent } from '../contacto/contacto.component';
+import { SolutionFinderComponent } from "../solution-finder/solution-finder.component";
 
 @Component({
   selector: 'app-section-container',
@@ -18,6 +19,7 @@ import { ContactoComponent } from '../contacto/contacto.component';
     AboutComponent,
     ClientesComponent,
     ContactoComponent,
+    SolutionFinderComponent
   ],
   template: `
     <div class="snap-container">
@@ -29,12 +31,15 @@ import { ContactoComponent } from '../contacto/contacto.component';
         <app-about class="no-snap"></app-about>
       </section>
       <section class="snap-nosection">
-        <app-soluciones></app-soluciones>
+        <app-soluciones (solutionFinderClicked)="showSolutionFinder()"></app-soluciones>
+      </section>
+      <section class="snap-nosection" *ngIf="showSolutionFinderVisible">
+        <app-solution-finder></app-solution-finder>
       </section>
       <section class="snap-section">
         <app-clientes></app-clientes>
       </section>
-      <section class="snap-section">
+      <section class="snap-asection">
         <app-contacto></app-contacto>
       </section>
     </div>
@@ -42,9 +47,8 @@ import { ContactoComponent } from '../contacto/contacto.component';
   styles: [
     `
       .snap-container {
-        height: 100vh;
+        height: 150vh;
         overflow-y: scroll;
-        /*scroll-snap-type: y mandatory;*/
         position: relative;
         padding-top: 60px; /* Adjust according to navbar height */
         scroll-behavior: smooth;
@@ -54,6 +58,13 @@ import { ContactoComponent } from '../contacto/contacto.component';
         scroll-snap-align: start;
         scroll-snap-stop: always;
         height: 100vh;
+        position: relative;
+      }
+
+      .snap-asection {
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        height: 150vh;
         position: relative;
       }
 
@@ -77,7 +88,13 @@ import { ContactoComponent } from '../contacto/contacto.component';
         scroll-snap-align: none; /* Disable scroll snap */
         height: 120vh; /* Increase height to give more space */
       }
-    `,
-  ],
+    `
+  ]
 })
-export class SectionContainerComponent {}
+export class SectionContainerComponent {
+  showSolutionFinderVisible: boolean = false;
+
+  showSolutionFinder() {
+    this.showSolutionFinderVisible = true;
+  }
+}
