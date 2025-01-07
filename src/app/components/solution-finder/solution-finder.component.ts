@@ -41,7 +41,6 @@ interface Result {
     ])
   ],
   template: `
-  <div id="finder" #finder>
     <div class="finder-container" id="finder">
       <!-- Inicio -->
       <div *ngIf="!started" class="start-screen" [@fadeInOut]>
@@ -119,7 +118,6 @@ interface Result {
         </div>
       </div>
     </div>
-  </div>
   `,
   styles: [`
     .finder-container {

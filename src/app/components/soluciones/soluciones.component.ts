@@ -1,4 +1,4 @@
-import { Component, Output, OnInit, HostListener, EventEmitter } from '@angular/core';
+import { Component, Output, OnInit, HostListener, EventEmitter, ViewChild, ElementRef  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { 
@@ -653,8 +653,12 @@ export class SolutionsComponent implements OnInit {
 
 
 
+  @ViewChild('#contacto') finderElement!: ElementRef;
 
   onSolutionFinderClick(): void {
+    if (this.finderElement) {
+      this.finderElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
+    }
     this.solutionFinderClicked.emit();
   }
 
