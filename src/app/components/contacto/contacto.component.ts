@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-contacto',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <section class="contact-container" id="contacto">
       <div class="overlay">
@@ -23,21 +22,22 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
                 <i class="fas fa-map-marker-alt"></i>
                 <p>Las Heras 331, Concordia, Entre Ríos</p>
               </div>
-              <!-- WhatsApp Button -->
               <a href="https://wa.me/message/6OHMJMTGTRMWP1" target="_blank" class="whatsapp-button">
                 <i class="fab fa-whatsapp"></i>
                 <span>Chatea con nosotros</span>
               </a>
             </div>
           </div>
+
           <!-- Contact Form Side -->
           <div class="contact-form">
-            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+            <form action="https://formspree.io/f/xkggpdgb" method="POST">
               <div class="form-row">
                 <div class="form-group">
                   <input
                     type="text"
                     formControlName="name"
+                    name="name"
                     placeholder="Nombre completo *"
                     [class.invalid]="isFieldInvalid('name')"
                   />
@@ -50,6 +50,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
                   <input
                     type="email"
                     formControlName="email"
+                    name="email"
                     placeholder="Email *"
                     [class.invalid]="isFieldInvalid('email')"
                   />
@@ -64,12 +65,13 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
                   <input
                     type="tel"
                     formControlName="phone"
+                    name="phone"
                     placeholder="Teléfono"
                   />
                 </div>
 
                 <div class="form-group">
-                  <select formControlName="subject">
+                  <select formControlName="subject" name="subject">
                     <option value="" disabled selected>Motivo de contacto *</option>
                     <option value="info">Información general</option>
                     <option value="quote">Solicitar presupuesto</option>
@@ -82,6 +84,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
               <div class="form-group">
                 <textarea
                   formControlName="message"
+                  name="message"
                   placeholder="Tu mensaje *"
                   rows="4"
                   [class.invalid]="isFieldInvalid('message')"
@@ -93,7 +96,6 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 
               <button
                 type="submit"
-                [disabled]="contactForm.invalid || isSubmitting"
                 [class.submitting]="isSubmitting"
               >
                 <span>{{ isSubmitting ? 'Enviando...' : 'Enviar mensaje' }}</span>
@@ -358,7 +360,7 @@ export class ContactoComponent implements OnInit {
   isSubmitting = false;
   showSuccessModal = false;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
     this.contactForm = this.fb.group({
@@ -378,24 +380,13 @@ export class ContactoComponent implements OnInit {
   onSubmit() {
     if (this.contactForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
-
-      // Replace with your actual email service endpoint
-      const emailEndpoint = 'your-email-service-endpoint';
-
-      this.http.post(emailEndpoint, this.contactForm.value).subscribe({
-        next: () => {
-          this.isSubmitting = false;
-          this.showSuccessModal = true;
-          this.contactForm.reset();
-        },
-        error: (error) => {
-          console.error('Error sending email:', error);
-          this.isSubmitting = false;
-          // Handle error (show error message to user)
-        },
-      });
+      setTimeout(() => {
+        this.isSubmitting = false;
+        this.showSuccessModal = true;
+        this.contactForm.reset();
+      }, 1000);
     } else {
-      Object.keys(this.contactForm.controls).forEach((key) => {
+      Object.keys(this.contactForm.controls).forEach(key => {
         const control = this.contactForm.get(key);
         if (control) {
           control.markAsTouched();
