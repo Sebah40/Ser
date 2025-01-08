@@ -33,9 +33,9 @@ import { EnergiaComponent } from "../energia/energia.component";
         <app-about class="no-snap"></app-about>
       </section>
       <section class="snap-nosection">
-        <app-solutions (solutionFinderClicked)="showSolutionFinder()"></app-solutions>
+        <app-solutions></app-solutions>
       </section>
-      <section class="snap-nosection" *ngIf="showSolutionFinderVisible">
+      <section class="snap-nosection">
         <app-solution-finder></app-solution-finder>
       </section>
       <section class="snap-nosection">

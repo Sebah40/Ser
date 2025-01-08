@@ -52,10 +52,9 @@ import {
             >
           </div>
           <div class="solutions-footer">
-        <button class="finder-button" (click)="onSolutionFinderClick()">
-          <i class="fas fa-lightbulb"></i>
-          Encuentra tu Solución Ideal
-        </button>
+
+          <a href="#finder" class="finder-button"><i class="fas fa-lightbulb"></i>Encuentra tu Solución Ideal</a>
+
       </div>
         </div>
       </div>
@@ -373,6 +372,7 @@ import {
       align-items: center;
       gap: 0.75rem;
       cursor: pointer;
+      text-decoration: none;
       transition: all var(--transition);
       box-shadow: var(--shadow);
     }
@@ -653,14 +653,12 @@ export class SolutionsComponent implements OnInit {
 
 
 
-  @ViewChild('#contacto') finderElement!: ElementRef;
+  @ViewChild('finder') finderElement!: ElementRef;
 
   onSolutionFinderClick(): void {
     if (this.finderElement) {
       this.finderElement.nativeElement.scrollIntoView({ behavior: 'smooth' });
     }
-    this.solutionFinderClicked.emit();
   }
 
-  @Output() solutionFinderClicked = new EventEmitter<void>();
 }

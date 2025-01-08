@@ -30,7 +30,7 @@ import { CommonModule } from '@angular/common';
 
         <ul class="nav-links" [class.open]="menuOpen">
           <li><a href="/" class="nav-link">Inicio</a></li>
-          <li><a href="#contacto" class="nav-link">Contacto</a></li>
+          <li><a href="#finder" class="nav-link">Contacto</a></li>
           <li><a href="/blog" class="nav-link">Obras realizadas</a></li> <!-- Added Blog button -->
           <li>
             <a
