@@ -1,6 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { HttpClient } from '@angular/common/http';
+import { switchMap } from 'rxjs/operators';
+import { interval, Subscription } from 'rxjs';
+
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface GrowattData {
+  eTotal: number;
+  pac: number;
+  eToday: number;
+}
 
 @Component({
   selector: 'app-about',
@@ -10,115 +24,120 @@ import { trigger, transition, style, animate } from '@angular/animations';
     <section class="about-section">
       <div class="overlay"></div>
       <div class="content-container">
-        <!-- Main Content -->
-        <div class="text-content" [class.visible]="isVisible">
-          <h2 class="title">Sobre nosotros</h2>
-          <div class="divider"></div>
-          <p class="description">
-          Brindamos asesoría, consultoría e instalación de soluciones con el propósito de proporcionar servicios enfocados en eficiencia energética, reducción de consumo y aprovechamiento óptimo de la energía.
-          </p>
+        <div class="two-column-layout">
+          <!-- Main Content Column -->
+          <div class="main-column">
+            <div class="text-content" [class.visible]="isVisible">
+              <h2 class="title">Sobre nosotros</h2>
+              <div class="divider"></div>
+              <p class="description">
+                Brindamos asesoría, consultoría e instalación de soluciones con el
+                propósito de proporcionar servicios enfocados en eficiencia
+                energética, reducción de consumo y aprovechamiento óptimo de la
+                energía.
+              </p>
 
-          <!-- Modal Component HTML -->
-          <div
-            class="modal-overlay"
-            *ngIf="isModalVisible"
-            (click)="closeModal()"
-          >
-            <div class="modal-content" (click)="$event.stopPropagation()">
-              <button class="close-btn" (click)="closeModal()">×</button>
-              <h2 class="modal-title">VALORES</h2>
-              <div class="modal-body">
-                <p>
-                  <strong>Sostenibilidad:</strong> Nos comprometemos a la
-                  promoción y desarrollo de soluciones energéticas sostenibles y
-                  respetuosas con el medio ambiente.
-                </p>
-                <p>
-                  <strong>Responsabilidad:</strong> Participando y colaborando
-                  en las acciones comunitarias que contribuyan a cuidar el
-                  planeta.
-                </p>
-                <p>
-                  <strong>Innovación:</strong> Buscando constantemente
-                  soluciones innovadoras y desarrollo de tecnologías más
-                  eficientes y rentables.
-                </p>
-                <p>
-                  <strong>Calidad:</strong> Nos comprometemos a la entrega de
-                  productos y servicios de alta calidad, garantizando la
-                  satisfacción del cliente y la durabilidad de las soluciones
-                  implementadas.
-                </p>
-                <p>
-                  <strong>Confianza:</strong> Buscamos construir relaciones
-                  sólidas con los clientes, basadas en la confianza y la
-                  integridad en todas las interacciones.
-                </p>
-                <p>
-                  <strong>Colaboración:</strong> Mediante la búsqueda de
-                  alianzas estratégicas con otros actores del sector para
-                  promover el crecimiento y la adopción de energía solar
-                  fotovoltaica.
-                </p>
-                <p>
-                  <strong>Educación y divulgación:</strong> Mediante la
-                  promoción de la conciencia y el conocimiento sobre la energía
-                  solar fotovoltaica, ofreciendo programas de educación y
-                  divulgación para clientes y la comunidad en general.
-                </p>
-                <p>
-                  <strong>Ética:</strong> Actuando con integridad y ética en
-                  todas nuestras actividades comerciales, prevaleciendo el
-                  respeto hacia las partes interesadas.
-                </p>
+              <!-- Stats Section -->
+              <div class="stats-container">
+                <div class="stat-item" *ngFor="let stat of stats">
+                  <div class="stat-value">{{ stat.value }}</div>
+                  <div class="stat-label">{{ stat.label }}</div>
+                </div>
+              </div>
+
+              <!-- Tabs Section -->
+              <div class="tabs-container">
+                <div class="tabs-header">
+                  <button
+                    *ngFor="let tab of tabs"
+                    class="tab-button"
+                    [class.active]="activeTab === tab.id"
+                    (click)="setActiveTab(tab.id)"
+                  >
+                    {{ tab.title }}
+                  </button>
+                </div>
+                <div class="tab-content" [class.visible]="tabContentVisible">
+                  <h3>{{ getCurrentTab().title }}</h3>
+                  <p>{{ getCurrentTab().content }}</p>
+                </div>
+              </div>
+
+              <!-- <button class="learn-more-btn" (click)="openModal()">
+                Nuestros valores
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="arrow-icon"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button> -->
+            </div>
+          </div>
+
+          <!-- Energy Stats Column -->
+          <div class="energy-stats-column">
+            <!-- Energy Impact Stats -->
+            <div class="energy-stats-container" *ngIf="!isLoading">
+              <div class="energy-stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-bolt"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>Potencia total generada</h3>
+                  <div class="stat-value1">{{ growattData.eTotal }} Kw</div>
+                </div>
+              </div>
+
+              <div class="energy-stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-leaf"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>Reducción de CO2</h3>
+                  <div class="stat-value1">
+                    {{ (growattData.eTotal * 0.4).toFixed(2) }} Kg
+                  </div>
+                </div>
+              </div>
+
+              <div class="energy-stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-tree"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>Árboles Salvados</h3>
+                  <div class="stat-value1">
+                    {{ (growattData.eTotal * 0.2).toFixed(0) }} Árboles
+                  </div>
+                </div>
+              </div>
+
+              <div class="energy-stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-sun"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>Energía diaria</h3>
+                  <div class="stat-value1">{{ growattData.eToday }} kW</div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Stats Section -->
-          <div class="stats-container">
-            <div class="stat-item" *ngFor="let stat of stats">
-              <div class="stat-value">{{ stat.value }}</div>
-              <div class="stat-label">{{ stat.label }}</div>
+            <!-- Loading indicator for energy stats -->
+            <div *ngIf="isLoading" class="loading-container">
+              <div class="loader"></div>
             </div>
           </div>
-
-          <!-- Tabs Section -->
-          <div class="tabs-container">
-            <div class="tabs-header">
-              <button
-                *ngFor="let tab of tabs"
-                class="tab-button"
-                [class.active]="activeTab === tab.id"
-                (click)="setActiveTab(tab.id)"
-              >
-                {{ tab.title }}
-              </button>
-            </div>
-            <div class="tab-content" [class.visible]="tabContentVisible">
-              <h3>{{ getCurrentTab().title }}</h3>
-              <p>{{ getCurrentTab().content }}</p>
-            </div>
-          </div>
-
-          <button class="learn-more-btn" (click)="openModal()">
-            Nuestros valores
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="arrow-icon"
-            >
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </button>
         </div>
 
         <!-- Feature Cards -->
@@ -129,73 +148,94 @@ import { trigger, transition, style, animate } from '@angular/animations';
             <p class="feature-description">{{ feature.description }}</p>
           </div>
         </div>
+
+        <!-- Modal Component -->
+        <div class="modal-overlay" *ngIf="isModalVisible" (click)="closeModal()">
+          <!-- Modal content remains the same -->
+        </div>
       </div>
     </section>
   `,
   styles: [
     `
-    html, body {
-    height: 100%;
-    margin: 0;
-    scroll-snap-type: y mandatory;
-    overflow-y: scroll;
-}
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        scroll-snap-type: y mandatory;
+        overflow-y: scroll;
+      }
 
-.about-section {
-    position: relative;
-    min-height: 100vh;  /* Keeps the section at least the height of the viewport */
-    height: auto;       /* Allow the section to grow naturally based on content */
-    width: 100%;
-    background: url('/about.jpg') center center;
-    background-attachment: fixed;
-    background-size: cover;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    margin-bottom: 5vh;  /* Adds space between this section and the next */
-    scroll-snap-align: start;  /* Ensures the section aligns correctly when scrolling */
-}
-
-@media (max-width: 900px) {
-    .about-section {
-        min-height: 80vh;  /* Reduces the height on smaller screens */
-        padding: 2rem;     /* Adds padding to prevent text from touching the edges */
-        background-position: center center;
-        margin-bottom: 4vh;  /* Slightly reduced margin for smaller screens */
+      .two-column-layout {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
     }
-}
 
-@media (max-width: 600px) {
-    .about-section {
-        padding: 1rem;  /* Reduces padding for very small screens */
-        margin-bottom: 4vh;  /* Consistent margin for very small screens */
+    .main-column {
+      flex: 1;
+      min-width: 0; /* Prevents flex item from overflowing */
     }
-}
+    .energy-stats-column {
+      width: 400px;
+      padding-top: 3.5rem; /* Aligns with main content after title */
+    }
 
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.28) 0%,
-        rgba(0, 0, 0, 0.6) 100%
-    );
-}
+      .about-section {
+        position: relative;
+        min-height: 100vh; /* Keeps the section at least the height of the viewport */
+        height: auto; /* Allow the section to grow naturally based on content */
+        width: 100%;
+        background: url('/about.jpg') center center;
+        background-attachment: fixed;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-bottom: 5vh; /* Adds space between this section and the next */
+        scroll-snap-align: start; /* Ensures the section aligns correctly when scrolling */
+      }
 
-.content-container {
-    position: relative;
-    z-index: 2;
-    max-width: 1200px;
-    width: 100%;
-    padding: 4rem 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-}
+      @media (max-width: 900px) {
+        .about-section {
+          min-height: 80vh; /* Reduces the height on smaller screens */
+          padding: 2rem; /* Adds padding to prevent text from touching the edges */
+          background-position: center center;
+          margin-bottom: 4vh; /* Slightly reduced margin for smaller screens */
+        }
+      }
+
+      @media (max-width: 600px) {
+        .about-section {
+          padding: 1rem; /* Reduces padding for very small screens */
+          margin-bottom: 4vh; /* Consistent margin for very small screens */
+        }
+      }
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.28) 0%,
+          rgba(0, 0, 0, 0.6) 100%
+        );
+      }
+
+      .content-container {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        width: 100%;
+        padding: 4rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+      }
 
       .text-content {
         max-width: 700px;
@@ -215,7 +255,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
       .title {
         font-size: 2.5rem;
-        color:#0c457a;
+        color: #0c457a;
         margin-bottom: 1.5rem;
         font-weight: 700;
       }
@@ -266,6 +306,13 @@ import { trigger, transition, style, animate } from '@angular/animations';
         color: #0c457a;
         margin-bottom: 0.5rem;
       }
+      .stat-value1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color:rgb(255, 255, 255);
+        margin-bottom: 0.5rem;
+      }
+
 
       .stat-label {
         font-size: 0.9rem;
@@ -463,6 +510,24 @@ import { trigger, transition, style, animate } from '@angular/animations';
         transition: transform 0.3s ease;
       }
 
+      /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      .two-column-layout {
+        flex-direction: column;
+      }
+
+      .energy-stats-column {
+        width: 100%;
+        padding-top: 0;
+      }
+
+      .energy-stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+      }
+    }
+
       @media (max-width: 768px) {
         .content-container {
           padding: 2rem 1rem;
@@ -492,6 +557,92 @@ import { trigger, transition, style, animate } from '@angular/animations';
           grid-template-columns: 1fr;
         }
       }
+      .energy-stats-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .energy-stat-card {
+      background: linear-gradient(135deg, #0c457a 0%, #1a6eb8 100%);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .energy-stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(12, 69, 122, 0.2);
+    }
+
+      .stat-icon {
+        background: rgba(255, 255, 255, 0.2);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+
+      .stat-content {
+        flex: 1;
+      }
+
+      .stat-content h3 {
+        font-size: 0.9rem;
+        margin: 0 0 0.5rem 0;
+        opacity: 0.9;
+      }
+
+      .stat-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+
+      .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+      }
+
+      .loader {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(12, 69, 122, 0.1);
+        border-left-color: #0c457a;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .energy-stats-container {
+        grid-template-columns: 1fr;
+      }
+
+        .energy-stat-card {
+          padding: 1rem;
+        }
+
+        .stat-value {
+          font-size: 1.2rem;
+        }
+      }
     `,
   ],
 })
@@ -500,10 +651,19 @@ export class AboutComponent implements OnInit {
   activeTab = 'vision';
   tabContentVisible = false;
   isModalVisible = false;
+  isLoading = true;
+
+  private dataSubscription?: Subscription;
   stats = [
     { value: '+500 kW', label: 'Paneles solares instalados' },
     { value: '+100 kWh', label: 'Baterías para sistemas aislados en el campo' },
   ];
+
+  growattData: GrowattData = {
+    eTotal: 0,
+    pac: 0,
+    eToday: 0,
+  };
 
   tabs = [
     {
@@ -541,7 +701,7 @@ export class AboutComponent implements OnInit {
     },
   ];
 
-  constructor() {
+  constructor(private http: HttpClient) {
     // Initialize tab content visibility after a short delay
     setTimeout(() => {
       this.tabContentVisible = true;
@@ -552,10 +712,39 @@ export class AboutComponent implements OnInit {
     setTimeout(() => {
       this.isVisible = true;
     }, 100);
+    this.fetchData();
+    this.startDataPolling();
   }
 
   ngOnDestroy() {
-    // Clear any existing timeouts if component is destroyed
+    if (this.dataSubscription) {
+      this.dataSubscription.unsubscribe();
+    }
+  }
+  private fetchData() {
+    this.http.get<GrowattData>('/api/growatt').subscribe({
+      next: (data) => {
+        this.growattData = data;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching Growatt data:', error);
+        this.isLoading = false;
+      },
+    });
+  }
+
+  private startDataPolling() {
+    this.dataSubscription = interval(60000)
+      .pipe(switchMap(() => this.http.get<GrowattData>('/api/growatt')))
+      .subscribe({
+        next: (data) => {
+          this.growattData = data;
+        },
+        error: (error) => {
+          console.error('Error polling Growatt data:', error);
+        },
+      });
   }
 
   setActiveTab(tabId: string) {

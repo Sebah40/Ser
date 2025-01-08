@@ -27,14 +27,15 @@ interface BlogPost {
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
     <section class="blog-section">
-      <!-- Header -->
+      <!-- Back Button -->
       <button (click)="goBack()" class="back-button">
-  <i class="fas fa-arrow-left"></i> Volver a la página principal
-</button>
+        <i class="fas fa-chevron-left"></i> Volver
+      </button>
+
+      <!-- Header -->
       <div class="blog-header">
-        
         <h1>Obras realizadas</h1>
-        <!-- <p class="subtitle">Descubre nuestros últimos trabajos y mantente informado sobre energía solar</p> -->
+        <div class="divider"></div>
         <p class="subtitle">En desarrollo</p>
 
         <!-- Filter controls -->
@@ -43,12 +44,11 @@ interface BlogPost {
             <i class="fas fa-search"></i>
             <input 
               type="text" 
-              placeholder="Buscar proyectos o artículos..."
+              placeholder="Buscar proyectos..."
               [(ngModel)]="searchTerm"
               (input)="filterPosts()"
             >
           </div>
-          
           
           <div class="category-filters">
             <button 
@@ -68,7 +68,10 @@ interface BlogPost {
         <div class="featured-image" [style.backgroundImage]="'url(' + featuredPost.imageUrl + ')'">
           <div class="featured-overlay">
             <div class="featured-content">
-              <span class="post-category">{{ featuredPost.category | titlecase }}</span>
+              <span class="post-category">
+                <i class="fas fa-star"></i>
+                Destacado
+              </span>
               <h2>{{ featuredPost.title }}</h2>
               <p>{{ featuredPost.description }}</p>
               <button (click)="openPost(featuredPost.id)" class="read-more">
@@ -87,12 +90,17 @@ interface BlogPost {
           [class.project-card]="post.category === 'project'"
         >
           <div class="card-image" [style.backgroundImage]="'url(' + post.imageUrl + ')'">
-            <span class="post-category">{{ post.category | titlecase }}</span>
+            <span class="post-category">
+              {{ post.category | titlecase }}
+            </span>
           </div>
           
           <div class="card-content">
             <div class="post-meta">
-              <span class="date">{{ post.date | date:'mediumDate' }}</span>
+              <span class="date">
+                <i class="far fa-calendar"></i>
+                {{ post.date | date:'d MMM, yyyy' }}
+              </span>
               <div class="tags">
                 <span *ngFor="let tag of post.tags" class="tag">{{ tag }}</span>
               </div>
@@ -101,24 +109,28 @@ interface BlogPost {
             <h3>{{ post.title }}</h3>
             <p>{{ post.description }}</p>
 
-            <!-- Project Stats (if available) -->
+            <!-- Project Stats -->
             <div *ngIf="post.category === 'project' && post.stats" class="project-stats">
               <div class="stat">
-                <i class="fas fa-bolt"></i>
-                <span>{{ post.stats.powerOutput }}</span>
-              </div>
-              <div class="stat">
                 <i class="fas fa-solar-panel"></i>
-                <span>{{ post.stats.panelsInstalled }} paneles</span>
+                <span class="stat-value">{{ post.stats.powerOutput }}</span>
+                <span class="stat-label">Potencia</span>
               </div>
               <div class="stat">
-                <i class="fas fa-piggy-bank"></i>
-                <span>{{ post.stats.costSavings }} ahorro</span>
+                <i class="fas fa-plug"></i>
+                <span class="stat-value">{{ post.stats.panelsInstalled }}</span>
+                <span class="stat-label">Paneles</span>
+              </div>
+              <div class="stat">
+                <i class="fas fa-leaf"></i>
+                <span class="stat-value">{{ post.stats.costSavings }}</span>
+                <span class="stat-label">Ahorro</span>
               </div>
             </div>
 
             <button (click)="openPost(post.id)" class="read-more">
-              {{ post.category === 'project' ? 'Ver Proyecto' : 'Leer Artículo' }}
+              <span>{{ post.category === 'project' ? 'Ver Proyecto' : 'Leer Artículo' }}</span>
+              <i class="fas fa-arrow-right"></i>
             </button>
           </div>
         </article>
@@ -126,157 +138,211 @@ interface BlogPost {
 
       <!-- Load More -->
       <div class="load-more" *ngIf="hasMorePosts">
-        <button (click)="loadMorePosts()" class="load-more-btn">
-          Cargar Más
-          <i class="fas fa-spinner" *ngIf="loading"></i>
+        <button (click)="loadMorePosts()" class="load-more-btn" [class.loading]="loading">
+          {{ loading ? 'Cargando...' : 'Cargar Más' }}
+          <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
         </button>
       </div>
     </section>
   `,
   styles: [`
+    /* Variables */
+    :host {
+      --primary-color: #0c457a;
+      --primary-light: #1a6eb8;
+      --primary-dark: #093663;
+      --accent-color: #4CAF50;
+      --text-primary: #2c3e50;
+      --text-secondary: #64748b;
+      --background-light:rgb(255, 255, 255);
+      --border-color: #e2e8f0;
+    }
+
     .blog-section {
       max-width: 1400px;
       margin: 0 auto;
       padding: 4rem 2rem;
+      background: var(--background-light);
     }
 
-    .blog-header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
+    /* Back Button */
     .back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: var(--primary-color, #4CAF50);
-  color: white;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.back-button:hover {
-  background: var(--primary-dark, #45a049);
-}
-
-
-    .blog-header h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: var(--text-primary, #333);
-    }
-
-    .subtitle {
-      color: var(--text-secondary, #666);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: white;
+      color: var(--primary-color);
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
       margin-bottom: 2rem;
     }
 
+    .back-button:hover {
+      background: var(--primary-color);
+      color: white;
+      transform: translateX(-5px);
+    }
+
+    /* Header */
+    .blog-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .blog-header h1 {
+      font-size: 2.75rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .divider {
+      width: 60px;
+      height: 4px;
+      background: var(--primary-color);
+      margin: 1rem auto;
+      border-radius: 2px;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Filter Controls */
     .filter-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
       max-width: 800px;
       margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(12, 69, 122, 0.1);
     }
 
     .search-bar {
       position: relative;
+      margin-bottom: 1.5rem;
     }
 
     .search-bar input {
       width: 100%;
       padding: 1rem 1rem 1rem 3rem;
-      border: 1px solid var(--border-color, #eee);
-      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
       font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(12, 69, 122, 0.1);
     }
 
     .search-bar i {
       position: absolute;
-      left: 1rem;
+      left: 1.2rem;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--text-secondary, #666);
+      color: var(--primary-color);
     }
 
     .category-filters {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.75rem;
       justify-content: center;
       flex-wrap: wrap;
     }
 
     .filter-btn {
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--border-color, #eee);
-      border-radius: 20px;
-      background: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      background: white;
+      color: var(--text-primary);
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
     }
 
+    .filter-btn i {
+      color: var(--primary-color);
+    }
+
     .filter-btn.active {
-      background: var(--primary-color, #4CAF50);
+      background: var(--primary-color);
       color: white;
       border-color: transparent;
     }
 
+    .filter-btn.active i {
+      color: white;
+    }
+
+    /* Featured Post */
     .featured-post {
-      margin: 3rem 0;
-      border-radius: 16px;
+      margin: 4rem 0;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 30px rgba(12, 69, 122, 0.15);
     }
 
     .featured-image {
-      height: 500px;
+      height: 600px;
       background-size: cover;
       background-position: center;
     }
 
     .featured-overlay {
       height: 100%;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      background: linear-gradient(to top, rgba(12, 69, 122, 0.9), transparent);
       display: flex;
       align-items: flex-end;
-      padding: 3rem;
+      padding: 4rem;
     }
 
     .featured-content {
       color: white;
-      max-width: 600px;
+      max-width: 800px;
     }
 
     .featured-content h2 {
-      font-size: 2rem;
+      font-size: 2.5rem;
       margin: 1rem 0;
+      line-height: 1.2;
     }
 
+    /* Posts Grid */
     .posts-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 2rem;
       margin: 3rem 0;
     }
 
     .post-card {
-      border-radius: 12px;
+      border-radius: 16px;
       overflow: hidden;
       background: white;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-      transition: transform 0.3s ease;
+      box-shadow: 0 4px 20px rgba(12, 69, 122, 0.08);
+      transition: all 0.3s ease;
     }
 
     .post-card:hover {
       transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(12, 69, 122, 0.12);
     }
 
     .card-image {
-      height: 200px;
+      height: 240px;
       background-size: cover;
       background-position: center;
       position: relative;
@@ -286,15 +352,18 @@ interface BlogPost {
       position: absolute;
       top: 1rem;
       left: 1rem;
-      background: var(--primary-color, #4CAF50);
+      background: var(--primary-color);
       color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
       font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .card-content {
-      padding: 1.5rem;
+      padding: 2rem;
     }
 
     .post-meta {
@@ -302,8 +371,13 @@ interface BlogPost {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-      font-size: 0.875rem;
-      color: var(--text-secondary, #666);
+      color: var(--text-secondary);
+    }
+
+    .date {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .tags {
@@ -312,69 +386,112 @@ interface BlogPost {
     }
 
     .tag {
-      background: var(--background-secondary, #f5f5f5);
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
+      background: var(--background-light);
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
       font-size: 0.75rem;
     }
 
+    h3 {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    /* Project Stats */
     .project-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin: 1.5rem 0;
-      padding: 1rem;
-      background: var(--background-secondary, #f5f5f5);
-      border-radius: 8px;
+      gap: 1.5rem;
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: var(--background-light);
+      border-radius: 12px;
     }
 
     .stat {
       text-align: center;
-      font-size: 0.875rem;
     }
 
     .stat i {
-      display: block;
-      font-size: 1.25rem;
-      color: var(--primary-color, #4CAF50);
+      font-size: 1.5rem;
+      color: var(--primary-color);
       margin-bottom: 0.5rem;
     }
 
+    .stat-value {
+      display: block;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    /* Buttons */
     .read-more {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: var(--primary-color, #4CAF50);
+      gap: 0.75rem;
+      padding: 0.875rem 1.75rem;
+      background: var(--primary-color);
       color: white;
       border: none;
-      border-radius: 25px;
+      border-radius: 50px;
+      font-weight: 500;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     .read-more:hover {
-      background: var(--primary-dark, #45a049);
+      background: var(--primary-light);
+      transform: translateX(5px);
     }
 
     .load-more {
       text-align: center;
-      margin-top: 3rem;
+      margin-top: 4rem;
     }
 
     .load-more-btn {
-      padding: 1rem 2rem;
-      background: none;
-      border: 2px solid var(--primary-color, #4CAF50);
-      color: var(--primary-color, #4CAF50);
-      border-radius: 25px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 2.5rem;
+      background: transparent;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      border-radius: 50px;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
     }
 
     .load-more-btn:hover {
-      background: var(--primary-color, #4CAF50);
+      background: var(--primary-color);
       color: white;
+    }
+
+    .load-more-btn.loading {
+      background: var(--primary-light);
+      color: white;
+      border-color: transparent;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .featured-image {
+        height: 500px;
+      }
     }
 
     @media (max-width: 768px) {
@@ -431,7 +548,7 @@ export class BlogComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading posts:', error);
+        console.error('Error cargando posts:', error);
         this.loading = false;
       }
     });

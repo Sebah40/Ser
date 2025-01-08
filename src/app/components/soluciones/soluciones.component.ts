@@ -43,18 +43,8 @@ import {
         <div class="header-content" @cardAnimation>
           <h1 class="gradient-text">Soluciones Energéticas</h1>
           <p class="subtitle">Descubre el poder de la energía solar para tu hogar o negocio</p>
-          <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input 
-              type="text" 
-              placeholder="Buscador en desarrollo..." 
-              (input)="filterSolutions($event)"
-            >
-          </div>
           <div class="solutions-footer">
-
           <a href="#finder" class="finder-button"><i class="fas fa-lightbulb"></i>Encuentra tu Solución Ideal</a>
-
       </div>
         </div>
       </div>
@@ -551,7 +541,7 @@ export class SolutionsComponent implements OnInit {
       id: 'offgrid',
       title: 'Off Grid',
       description: 'Soluciones completas para independencia energética total. Ideal para propiedades sin acceso a la red eléctrica o que buscan autosuficiencia total.',
-      image: '/offgrid.jpg',
+      image: '/offgrid.jpeg',
       storeUrl: 'https://tienda.rigelec.com.ar/?product_cat=b-aislados',
       pdf: '/pdfs/off-grid.pdf',
       stats: [
@@ -570,7 +560,7 @@ export class SolutionsComponent implements OnInit {
       pdf: '/pdfs/on-grid.pdf',
       stats: [
         { value: '80%', label: 'Ahorro' },
-        { value: '5+', label: 'Años ROI' },
+        { value: '4-6', label: 'Años para recuperar inversión' },
         { value: '0', label: 'Mantenimiento' },
         { value: '10+', label: 'Años de vida útil' }
       ]
@@ -597,13 +587,6 @@ export class SolutionsComponent implements OnInit {
 
   ngOnInit() {  }
 
-  filterSolutions(event: Event): void {
-    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredSolutions = this.solutions.filter(solution =>
-      solution.title.toLowerCase().includes(searchTerm) ||
-      solution.description.toLowerCase().includes(searchTerm)
-    );
-  }
 
   setActiveCard(id: string): void {
     this.activeCard = id;

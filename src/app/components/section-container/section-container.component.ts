@@ -7,7 +7,6 @@ import { SolutionsComponent } from '../soluciones/soluciones.component';
 import { ClientesComponent } from '../clientes/clientes.component';
 import { ContactoComponent } from '../contacto/contacto.component';
 import { SolutionFinderComponent } from "../solution-finder/solution-finder.component";
-import { EnergiaComponent } from "../energia/energia.component";
 
 @Component({
   selector: 'app-section-container',
@@ -21,7 +20,6 @@ import { EnergiaComponent } from "../energia/energia.component";
     ClientesComponent,
     ContactoComponent,
     SolutionFinderComponent,
-    EnergiaComponent
 ],
   template: `
     <div class="snap-container">
@@ -38,9 +36,6 @@ import { EnergiaComponent } from "../energia/energia.component";
       <section class="snap-nosection">
         <app-solution-finder></app-solution-finder>
       </section>
-      <section class="snap-nosection">
-        <app-energia></app-energia>
-      </section>
       <section class="snap-section">
         <app-clientes></app-clientes>
       </section>
@@ -52,7 +47,7 @@ import { EnergiaComponent } from "../energia/energia.component";
   styles: [
     `
       .snap-container {
-        height: 150vh;
+        height: 100vh;
         overflow-y: scroll;
         position: relative;
         padding-top: 60px; /* Adjust according to navbar height */
@@ -69,7 +64,7 @@ import { EnergiaComponent } from "../energia/energia.component";
       .snap-asection {
         scroll-snap-align: start;
         scroll-snap-stop: always;
-        height: 150vh;
+        height: 100vh;
         position: relative;
       }
 
