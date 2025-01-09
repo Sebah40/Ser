@@ -31,7 +31,7 @@ interface GrowattData {
               <div class="card-content">
                 <h2 class="card-title">Potencia total que generamos</h2>
                 <div class="card-badge">
-                  {{ growattData.eTotal }} Kw
+                  {{ 13000 }} Kw
                 </div>
               </div>
             </div>
@@ -46,7 +46,7 @@ interface GrowattData {
               <div class="card-content">
                 <h2 class="card-title">Reduccion de emisiones de CO2</h2>
                 <div class="card-badge">
-                  {{ (growattData.eTotal * 0.4).toFixed(2) }} Kg
+                   5500  Kg
                 </div>
               </div>
             </div>
@@ -61,7 +61,7 @@ interface GrowattData {
               <div class="card-content">
                 <h2 class="card-title">Energía generada durante el día</h2>
                 <div class="card-badge">
-                  {{ growattData.eToday }}kW
+                  13 kW
                 </div>
               </div>
             </div>

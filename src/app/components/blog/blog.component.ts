@@ -74,9 +74,6 @@ interface BlogPost {
               </span>
               <h2>{{ featuredPost.title }}</h2>
               <p>{{ featuredPost.description }}</p>
-              <button (click)="openPost(featuredPost.id)" class="read-more">
-                Leer más <i class="fas fa-arrow-right"></i>
-              </button>
             </div>
           </div>
         </div>
@@ -84,57 +81,65 @@ interface BlogPost {
 
       <!-- Posts Grid -->
       <div class="posts-grid">
-        <article 
-          *ngFor="let post of filteredPosts" 
-          class="post-card"
-          [class.project-card]="post.category === 'project'"
-        >
-          <div class="card-image" [style.backgroundImage]="'url(' + post.imageUrl + ')'">
-            <span class="post-category">
-              {{ post.category | titlecase }}
-            </span>
-          </div>
-          
-          <div class="card-content">
-            <div class="post-meta">
-              <span class="date">
-                <i class="far fa-calendar"></i>
-                {{ post.date | date:'d MMM, yyyy' }}
-              </span>
-              <div class="tags">
-                <span *ngFor="let tag of post.tags" class="tag">{{ tag }}</span>
-              </div>
-            </div>
+      <article *ngFor="let post of filteredPosts" class="post-card" [class.project-card]="post.category === 'project'">
+  <div class="card-image" [style.backgroundImage]="'url(' + post.imageUrl + ')'" >
+    <span class="post-category">{{ post.category | titlecase }}</span>
+  </div>
 
-            <h3>{{ post.title }}</h3>
-            <p>{{ post.description }}</p>
-
-            <!-- Project Stats -->
-            <div *ngIf="post.category === 'project' && post.stats" class="project-stats">
-              <div class="stat">
-                <i class="fas fa-solar-panel"></i>
-                <span class="stat-value">{{ post.stats.powerOutput }}</span>
-                <span class="stat-label">Potencia</span>
-              </div>
-              <div class="stat">
-                <i class="fas fa-plug"></i>
-                <span class="stat-value">{{ post.stats.panelsInstalled }}</span>
-                <span class="stat-label">Paneles</span>
-              </div>
-              <div class="stat">
-                <i class="fas fa-leaf"></i>
-                <span class="stat-value">{{ post.stats.costSavings }}</span>
-                <span class="stat-label">Ahorro</span>
-              </div>
-            </div>
-
-            <button (click)="openPost(post.id)" class="read-more">
-              <span>{{ post.category === 'project' ? 'Ver Proyecto' : 'Leer Artículo' }}</span>
-              <i class="fas fa-arrow-right"></i>
-            </button>
-          </div>
-        </article>
+  <div class="card-content">
+    <div class="post-meta">
+      <span class="date">
+        <i class="far fa-calendar"></i>
+        {{ post.date | date:'d MMM, yyyy' }}
+      </span>
+      <div class="tags">
+        <span *ngFor="let tag of post.tags" class="tag">{{ tag }}</span>
       </div>
+    </div>
+
+    <h3>{{ post.title }}</h3>
+    <p>{{ post.description }}</p>
+
+    <!-- Project Stats -->
+    <div *ngIf="post.stats" class="project-stats">
+      <div class="stat">
+        <i class="fas fa-solar-panel"></i>
+        <span class="stat-value">{{ post.stats.powerOutput }}</span>
+        <span class="stat-label">Potencia</span>
+      </div>
+      <div class="stat">
+        <i class="fas fa-plug"></i>
+        <span class="stat-value">{{ post.stats.panelsInstalled }}</span>
+        <span class="stat-label">Paneles</span>
+      </div>
+      <div class="stat">
+        <i class="fas fa-leaf"></i>
+        <span class="stat-value">{{ post.stats.costSavings }}</span>
+        <span class="stat-label">Ahorro</span>
+      </div>
+    </div>
+
+    <!-- Delete button -->
+    <button (click)="openDeleteModal(post.id)" class="delete-button">Eliminar</button>
+  </div>
+</article>
+
+<!-- Modal for authentication code -->
+<div *ngIf="showDeleteModal" class="modal">
+  <div class="modal-content">
+    <h2>Eliminar Post</h2>
+    <input [(ngModel)]="authCode" type="text" placeholder="Código de autenticación" class="auth-code-input" />
+    <button (click)="deletePost()">Confirmar Eliminación</button>
+    <button (click)="closeDeleteModal()">Cancelar</button>
+  </div>
+</div>
+      </div>
+
+      <div class="create-post-container">
+  <button class="create-post-btn" (click)="goToCreatePost()">
+    <i class="fas fa-plus"></i> Crear Post
+  </button>
+</div>
 
       <!-- Load More -->
       <div class="load-more" *ngIf="hasMorePosts">
@@ -164,6 +169,107 @@ interface BlogPost {
       padding: 4rem 2rem;
       background: var(--background-light);
     }
+    .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.delete-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-dark);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+.back-button:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateX(-5px);
+}
+
+/* Delete Button */
+.delete-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-dark);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+.delete-button:hover {
+  background: #b23b3b;
+  transform: translateX(-5px);
+}
+.auth-code-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+.auth-code-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(12, 69, 122, 0.1);
+}
+
+.modal-content button {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.modal-content button:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .auth-code-input {
+    font-size: 0.9rem;
+  }
+
+  .modal-content button {
+    padding: 0.5rem 1.25rem;
+  }
+
+  .modal-content h2 {
+    font-size: 1.5rem;
+  }
+}
 
     /* Back Button */
     .back-button {
@@ -199,6 +305,42 @@ interface BlogPost {
       color: var(--primary-color);
       margin-bottom: 1rem;
     }
+
+    .create-post-container {
+  display: flex;
+  justify-content: flex-end;
+  margin: 2rem 0;
+}
+
+.create-post-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.75rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.create-post-btn:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(12, 69, 122, 0.2);
+}
+
+.create-post-btn i {
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .create-post-container {
+    justify-content: center;
+  }
+}
 
     .divider {
       width: 60px;
@@ -531,6 +673,10 @@ export class BlogComponent implements OnInit {
   hasMorePosts: boolean = true;
   loading: boolean = false;
   currentPage: number = 1;
+  postsPerPage: number = 10; // Number of posts per page for pagination
+  showDeleteModal = false;
+  authCode = ''; // Store the authCode here
+  postToDeleteId: number | null = null; // Store post ID for deletion
 
   constructor(private blogService: BlogService, private router: Router) {}
 
@@ -571,11 +717,18 @@ export class BlogComponent implements OnInit {
       );
     }
 
-    this.filteredPosts = filtered;
+    // Pagination logic: Only show the posts for the current page
+    const startIndex = (this.currentPage - 1) * this.postsPerPage;
+    const endIndex = startIndex + this.postsPerPage;
+    this.filteredPosts = filtered.slice(startIndex, endIndex);
+
+    // Check if there are more posts to load
+    this.hasMorePosts = filtered.length > endIndex;
   }
 
   selectCategory(category: string) {
     this.selectedCategory = category;
+    this.currentPage = 1; // Reset to the first page when category changes
     this.filterPosts();
   }
 
@@ -583,12 +736,43 @@ export class BlogComponent implements OnInit {
     this.router.navigate(['/']); // Navigate to the root (home) page
   }
 
-  loadMorePosts() {
-    this.currentPage++;
-    // Implement pagination logic here
+  goToCreatePost() {
+    this.router.navigate(['/crearblog']);
   }
 
-  openPost(id: number) {
-    // Implement navigation to post detail
+  loadMorePosts() {
+    if (this.hasMorePosts && !this.loading) {
+      this.loading = true;
+      this.currentPage++;
+      this.filterPosts();  // Re-filter and load the next set of posts
+      this.loading = false;
+    }
+  }
+  openDeleteModal(postId: number) {
+    this.showDeleteModal = true;
+    this.postToDeleteId = postId;
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+    this.authCode = '';  // Reset the authCode input
+  }
+
+  deletePost() {
+    if (this.authCode && this.postToDeleteId !== null) {
+      this.blogService.deletePost(this.postToDeleteId, this.authCode).subscribe({
+        next: () => {
+          // Successfully deleted the post
+          this.filteredPosts = this.filteredPosts.filter(post => post.id !== this.postToDeleteId);
+          this.closeDeleteModal();  // Close modal
+        },
+        error: (err) => {
+          console.error('Failed to delete post:', err);
+          alert('No se pudo eliminar el post. Verifique el código de autenticación.');
+        },
+      });
+    } else {
+      alert('Por favor, ingrese un código de autenticación válido.');
+    }
   }
 }

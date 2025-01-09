@@ -93,8 +93,8 @@ interface GrowattData {
                   <i class="fas fa-bolt"></i>
                 </div>
                 <div class="stat-content">
-                  <h3>Potencia total generada</h3>
-                  <div class="stat-value1">{{ growattData.eTotal }} Kw</div>
+                  <h3>Energía total generada</h3>
+                  <div class="stat-value1">202 MWh</div>
                 </div>
               </div>
 
@@ -105,7 +105,7 @@ interface GrowattData {
                 <div class="stat-content">
                   <h3>Reducción de CO2</h3>
                   <div class="stat-value1">
-                    {{ (growattData.eTotal * 0.4).toFixed(2) }} Kg
+                    83000 Kg
                   </div>
                 </div>
               </div>
@@ -117,7 +117,7 @@ interface GrowattData {
                 <div class="stat-content">
                   <h3>Árboles Salvados</h3>
                   <div class="stat-value1">
-                    {{ (growattData.eTotal * 0.2).toFixed(0) }} Árboles
+                    11100 Árboles
                   </div>
                 </div>
               </div>
@@ -128,7 +128,7 @@ interface GrowattData {
                 </div>
                 <div class="stat-content">
                   <h3>Energía diaria</h3>
-                  <div class="stat-value1">{{ growattData.eToday }} kW</div>
+                  <div class="stat-value1">750 kWh</div>
                 </div>
               </div>
             </div>

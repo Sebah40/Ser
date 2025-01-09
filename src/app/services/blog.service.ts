@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface BlogPost {
@@ -22,7 +22,7 @@ export interface BlogPost {
   providedIn: 'root'
 })
 export class BlogService {
-  private apiUrl = 'http://localhost:8080/api/posts';
+  private apiUrl = 'http://localhost:8080/api/post';
 
   constructor(private http: HttpClient) {}
 
@@ -32,5 +32,9 @@ export class BlogService {
 
   getPostById(id: number): Observable<BlogPost> {
     return this.http.get<BlogPost>(`${this.apiUrl}/${id}`);
+  }
+  deletePost(postId: number, authCode: string): Observable<void> {
+    const headers = new HttpHeaders().set('authCode', authCode); // Send authCode in the request header
+    return this.http.delete<void>(`${this.apiUrl}/${postId}`, { headers });
   }
 }
