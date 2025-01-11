@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { BlogCreateService } from '../../services/blog-create.service';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-blog-create',
   standalone: true,
@@ -66,13 +66,51 @@ import { BlogCreateService } from '../../services/blog-create.service';
               </small>
             </div>
 
+            <!-- Content Images Section -->
+            <div class="content-images">
+                <h4>Imágenes del Contenido</h4>
+                <div formArrayName="contentImages">
+                  <div *ngFor="let image of contentImages.controls; let i=index" class="image-input-group">
+                    <div class="image-input-row">
+                      <input 
+                        [formControlName]="i"
+                        type="text"
+                        placeholder="URL de la imagen"
+                      >
+                      <button type="button" class="remove-btn" (click)="removeContentImage(i)">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                    <!-- Preview if URL is valid -->
+                    <div *ngIf="image.value" class="image-preview">
+                      <img [src]="image.value" (error)="handleImageError($event)" alt="Preview">
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="add-image-btn" (click)="addContentImage()">
+                  <i class="fas fa-plus"></i> Agregar Imagen
+                </button>
+              </div>
+              <div class="modal" *ngIf="showImageHelperModal" (click)="closeImageHelper()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <h3>Imágenes Disponibles</h3>
+          <div class="available-images">
+            <div *ngFor="let image of contentImages.controls" class="image-item" 
+                 (click)="insertImageToContent(image.value)">
+              <img [src]="image.value" alt="Available image">
+              <div class="image-overlay">Click para insertar</div>
+            </div>
+          </div>
+          <button (click)="closeImageHelper()">Cerrar</button>
+        </div>
+      </div>
             <div class="form-row">
               <div class="form-group">
                 <select formControlName="category"
                         [class.invalid]="isFieldInvalid('category')">
                   <option value="" disabled>Selecciona categoría *</option>
-                  <option value="proyecto">Proyecto</option>
-                  <option value="artículo">Artículo</option>
+                  <option value="project">Proyecto</option>
+                  <option value="articulo">Artículo</option>
                 </select>
                 <small class="error-message" *ngIf="isFieldInvalid('category')">
                   La categoría es requerida
@@ -93,7 +131,7 @@ import { BlogCreateService } from '../../services/blog-create.service';
             </div>
 
             <!-- Project Stats (only shown for projects) -->
-            <div class="form-group" *ngIf="blogForm.get('category')?.value === 'proyecto'">
+            <div class="form-group" *ngIf="blogForm.get('category')?.value === 'project'">
               <h3>Estadísticas del Proyecto</h3>
               <div class="stats-container">
                 <input 
@@ -168,6 +206,115 @@ import { BlogCreateService } from '../../services/blog-create.service';
   margin: 2rem 0;
   width: 100%;
 }
+
+.content-section {
+      position: relative;
+    }
+
+    .content-images {
+      margin-top: 2rem;
+      border-top: 1px solid var(--border-color, #e2e8f0);
+      padding-top: 1.5rem;
+    }
+
+    h4 {
+      color: var(--primary-color, #0c457a);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .image-input-group {
+      margin-bottom: 1rem;
+    }
+
+    .image-input-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .remove-btn {
+      padding: 0.5rem;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .remove-btn:hover {
+      background: #dc2626;
+    }
+
+    .add-image-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--primary-color, #0c457a);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+
+    .add-image-btn:hover {
+      background: var(--primary-light, #1a6eb8);
+    }
+
+    .image-preview {
+      margin-top: 0.5rem;
+      max-width: 200px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .image-preview img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .available-images {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .image-item {
+      position: relative;
+      cursor: pointer;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .image-item img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .image-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .image-item:hover .image-overlay {
+      opacity: 1;
+    }
 
 .error-container {
   margin: 1rem 0;
@@ -341,29 +488,100 @@ export class BlogCreateComponent implements OnInit {
   isSubmitting = false;
   showSuccessModal = false;
   errorMessage: string | null = null;
+  showImageHelperModal = false;
 
   constructor(
     private fb: FormBuilder,
-    private blogCreateService: BlogCreateService
+    private blogCreateService: BlogCreateService,
+    private router: Router
+
   ) {
     this.blogForm = this.fb.group({
-      authCode: ['', [Validators.required, Validators.minLength(6)]],  // Move authCode here
+      authCode: ['', [Validators.required, Validators.minLength(6)]],
       title: ['', Validators.required],
       description: ['', Validators.required],
       content: ['', Validators.required],
       imageUrl: ['', Validators.required],
       category: ['', Validators.required],
       tags: [''],
-      // Stats fields directly in the form
+      contentImages: this.fb.array([]),
       powerOutput: [''],
       panelsInstalled: [null],
       costSavings: ['']
     });
   }
 
+  get contentImages() {
+    return this.blogForm.get('contentImages') as FormArray;
+  }
+
+
+  addContentImage() {
+    this.contentImages.push(this.fb.control(''));
+  }
+
+  removeContentImage(index: number) {
+    this.contentImages.removeAt(index);
+  }
+
+  handleImageError(event: any) {
+    event.target.src = 'assets/placeholder-image.jpg'; // Replace with your placeholder
+  }
+
+  showImageHelper() {
+    this.showImageHelperModal = true;
+  }
+
+  closeImageHelper() {
+    this.showImageHelperModal = false;
+  }
+
+  insertImageToContent(imageUrl: string) {
+    const contentControl = this.blogForm.get('content');
+    const currentContent = contentControl?.value || '';
+    const imageMarkdown = `\n![Imagen](${imageUrl})\n`;
+    contentControl?.setValue(currentContent + imageMarkdown);
+    this.closeImageHelper();
+  }
+
+  createPost() {
+    if (this.blogForm.valid && !this.isSubmitting) {
+      this.isSubmitting = true;
+      this.errorMessage = null;
+
+      // Filter out empty image URLs
+      const contentImages = this.contentImages.value.filter((url: string) => url.trim() !== '');
+
+      const postData = {
+        ...this.blogForm.value,
+        contentImages,
+        tags: this.blogForm.get('tags')?.value
+          ? this.blogForm.get('tags')?.value.split(',').map((tag: string) => tag.trim())
+          : [],
+        date: new Date().toISOString().split('T')[0]
+      };
+
+      this.blogCreateService.verifyAndCreatePost(postData).subscribe({
+        next: (response) => {
+          this.showSuccessModal = true;
+          this.isSubmitting = false;
+          this.resetForm();
+        },
+        error: (error) => {
+          console.error('Error creating post:', error);
+          this.isSubmitting = false;
+          this.errorMessage = 'Error al crear el post. Por favor, intente nuevamente.';
+        }
+      });
+    } else {
+      this.markFormGroupTouched(this.blogForm);
+    }
+  }
+
   ngOnInit() {
     this.isAuthenticated = false;
     this.errorMessage = null;
+    this.addContentImage(); // Add first image input by default
   }
 
   // Use blogForm's authCode field
@@ -388,45 +606,7 @@ export class BlogCreateComponent implements OnInit {
     }
   }
 
-  createPost() {
-    if (this.blogForm.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
-      this.errorMessage = null;
-
-      // Prepare form data
-      const postData = {
-        authCode: this.blogForm.get('authCode')?.value, // Directly get authCode from blogForm
-        title: this.blogForm.get('title')?.value,
-        description: this.blogForm.get('description')?.value,
-        content: this.blogForm.get('content')?.value,
-        imageUrl: this.blogForm.get('imageUrl')?.value,
-        category: this.blogForm.get('category')?.value,
-        date: new Date().toISOString().split('T')[0],
-        tags: this.blogForm.get('tags')?.value
-          ? this.blogForm.get('tags')?.value.split(',').map((tag: string) => tag.trim())
-          : [],
-        powerOutput: this.blogForm.get('powerOutput')?.value || null,
-        panelsInstalled: this.blogForm.get('panelsInstalled')?.value || null,
-        costSavings: this.blogForm.get('costSavings')?.value || null
-      };
-
-      // Pass the entire postData object as a single parameter
-      this.blogCreateService.verifyAndCreatePost(postData).subscribe({
-        next: (response) => {
-          this.showSuccessModal = true;
-          this.isSubmitting = false;
-          this.resetForm();
-        },
-        error: (error) => {
-          console.error('Error creating post:', error);
-          this.isSubmitting = false;
-          this.errorMessage = 'Error al crear el post. Por favor, intente nuevamente.';
-        }
-      });
-    } else {
-      this.markFormGroupTouched(this.blogForm);
-    }
-  }
+  
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.blogForm.get(fieldName);
@@ -434,9 +614,7 @@ export class BlogCreateComponent implements OnInit {
   }
 
   resetForm() {
-    this.blogForm.reset();
-    this.isAuthenticated = false;
-    this.errorMessage = null;
+    this.router.navigate(['/blog']);
   }
 
   closeModal() {

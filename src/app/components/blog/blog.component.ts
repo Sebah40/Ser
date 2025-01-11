@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Router } from '@angular/router';  // <-- Import Router
+import { Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
-// Interfaces
+
 interface BlogPost {
   id: number;
   title: string;
@@ -27,460 +27,311 @@ interface BlogPost {
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
     <section class="blog-section">
-      <!-- Back Button -->
-      <button (click)="goBack()" class="back-button">
-        <i class="fas fa-chevron-left"></i> Volver
-      </button>
+      <!-- Navigation -->
+      <nav class="nav-bar">
+        <button (click)="goBack()" class="nav-button">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="nav-controls">
+          <button 
+            *ngIf="isAdmin"
+            (click)="toggleAdminMode()" 
+            class="nav-button"
+            [class.active]="adminMode"
+          >
+            <i class="fas fa-lock"></i>
+          </button>
+        </div>
+      </nav>
 
       <!-- Header -->
-      <div class="blog-header">
-        <h1>Obras realizadas</h1>
-        <div class="divider"></div>
-        <p class="subtitle">En desarrollo</p>
+      <header class="header">
+        <h1>Nuestros Proyectos</h1>
+        <p>Descubre nuestras obras más recientes e innovadoras</p>
+      </header>
 
-        <!-- Filter controls -->
-        <div class="filter-controls">
-          <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input 
-              type="text" 
-              placeholder="Buscar proyectos..."
-              [(ngModel)]="searchTerm"
-              (input)="filterPosts()"
-            >
-          </div>
-          
-          <div class="category-filters">
-            <button 
-              *ngFor="let cat of categories" 
-              [class.active]="selectedCategory === cat"
-              (click)="selectCategory(cat)"
-              class="filter-btn"
-            >
-              {{ cat }}
-            </button>
-          </div>
+      <!-- Filters -->
+      <div class="filters">
+        <div class="search-wrapper">
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm"
+            (input)="filterPosts()"
+            placeholder="Buscar proyectos..."
+            class="search-input"
+          >
+          <i class="fas fa-search search-icon"></i>
         </div>
+        
+        
       </div>
 
-      <!-- Featured Post -->
-      <div class="featured-post" *ngIf="featuredPost">
-        <div class="featured-image" [style.backgroundImage]="'url(' + featuredPost.imageUrl + ')'">
-          <div class="featured-overlay">
-            <div class="featured-content">
-              <span class="post-category">
-                <i class="fas fa-star"></i>
-                Destacado
-              </span>
-              <h2>{{ featuredPost.title }}</h2>
-              <p>{{ featuredPost.description }}</p>
+      <!-- Admin Controls -->
+      <div *ngIf="adminMode" class="admin-controls">
+        <button (click)="goToCreatePost()" class="admin-button">
+          <i class="fas fa-plus"></i> Nuevo Proyecto
+        </button>
+      </div>
+
+      <!-- Projects Grid -->
+      <div class="projects-grid">
+        <article 
+          *ngFor="let post of filteredPosts" 
+          class="project-card"
+          (click)="openProject(post)"
+        >
+          <div class="card-image" [style.backgroundImage]="'url(' + post.imageUrl + ')'">
+            <div class="card-overlay">
+              <span class="project-category">{{ post.category === 'project' ? 'Proyectos' : 'Artículos' }}</span>
+              <div *ngIf="adminMode" class="admin-actions">
+                <button 
+                  (click)="openDeleteModal(post.id); $event.stopPropagation()" 
+                  class="icon-button delete"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+                
+              </div>
             </div>
           </div>
-        </div>
+
+          <div class="card-content">
+            <div class="meta">
+              <span class="date"><i class="far fa-calendar"></i> {{ post.date | date:'dd/MM/yyyy' }}</span>
+              <div class="tags">
+                <span *ngFor="let tag of post.tags.slice(0, 2)" class="tag">{{ tag }}</span>
+              </div>
+            </div>
+
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.description }}</p>
+
+            <div *ngIf="post.stats" class="stats">
+              <div class="stat">
+                <i class="fas fa-solar-panel"></i>
+                <span>{{ post.stats.powerOutput }}</span>
+              </div>
+              <div class="stat">
+                <i class="fas fa-plug"></i>
+                <span>{{ post.stats.panelsInstalled }} paneles</span>
+              </div>
+              <div class="stat">
+                <i class="fas fa-leaf"></i>
+                <span>{{ post.stats.costSavings }} ahorro</span>
+              </div>
+            </div>
+          </div>
+        </article>
       </div>
-
-      <!-- Posts Grid -->
-      <div class="posts-grid">
-      <article *ngFor="let post of filteredPosts" class="post-card" [class.project-card]="post.category === 'project'">
-  <div class="card-image" [style.backgroundImage]="'url(' + post.imageUrl + ')'" >
-    <span class="post-category">{{ post.category | titlecase }}</span>
-  </div>
-
-  <div class="card-content">
-    <div class="post-meta">
-      <span class="date">
-        <i class="far fa-calendar"></i>
-        {{ post.date | date:'d MMM, yyyy' }}
-      </span>
-      <div class="tags">
-        <span *ngFor="let tag of post.tags" class="tag">{{ tag }}</span>
-      </div>
-    </div>
-
-    <h3>{{ post.title }}</h3>
-    <p>{{ post.description }}</p>
-
-    <!-- Project Stats -->
-    <div *ngIf="post.stats" class="project-stats">
-      <div class="stat">
-        <i class="fas fa-solar-panel"></i>
-        <span class="stat-value">{{ post.stats.powerOutput }}</span>
-        <span class="stat-label">Potencia</span>
-      </div>
-      <div class="stat">
-        <i class="fas fa-plug"></i>
-        <span class="stat-value">{{ post.stats.panelsInstalled }}</span>
-        <span class="stat-label">Paneles</span>
-      </div>
-      <div class="stat">
-        <i class="fas fa-leaf"></i>
-        <span class="stat-value">{{ post.stats.costSavings }}</span>
-        <span class="stat-label">Ahorro</span>
-      </div>
-    </div>
-
-    <!-- Delete button -->
-    <button (click)="openDeleteModal(post.id)" class="delete-button">Eliminar</button>
-  </div>
-</article>
-
-<!-- Modal for authentication code -->
-<div *ngIf="showDeleteModal" class="modal">
-  <div class="modal-content">
-    <h2>Eliminar Post</h2>
-    <input [(ngModel)]="authCode" type="text" placeholder="Código de autenticación" class="auth-code-input" />
-    <button (click)="deletePost()">Confirmar Eliminación</button>
-    <button (click)="closeDeleteModal()">Cancelar</button>
-  </div>
-</div>
-      </div>
-
-      <div class="create-post-container">
-  <button class="create-post-btn" (click)="goToCreatePost()">
-    <i class="fas fa-plus"></i> Crear Post
-  </button>
-</div>
 
       <!-- Load More -->
-      <div class="load-more" *ngIf="hasMorePosts">
-        <button (click)="loadMorePosts()" class="load-more-btn" [class.loading]="loading">
-          {{ loading ? 'Cargando...' : 'Cargar Más' }}
-          <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+      <div *ngIf="hasMorePosts" class="load-more">
+        <button 
+          (click)="loadMorePosts()" 
+          class="load-button"
+          [class.loading]="loading"
+        >
+          {{ loading ? 'Cargando...' : 'Ver más proyectos' }}
+          <i *ngIf="loading" class="fas fa-spinner fa-spin"></i>
         </button>
+      </div>
+
+      <!-- Delete Modal -->
+      <div *ngIf="showDeleteModal" class="modal">
+        <div class="modal-content">
+          <h2>Confirmar Eliminación</h2>
+          <p>Por favor, ingrese el código de autenticación para eliminar este proyecto.</p>
+          <input 
+            [(ngModel)]="authCode" 
+            type="password" 
+            placeholder="Código de autenticación"
+            class="auth-input"
+          />
+          <div class="modal-actions">
+            <button (click)="deletePost()" class="confirm-button">Confirmar</button>
+            <button (click)="closeDeleteModal()" class="cancel-button">Cancelar</button>
+          </div>
+        </div>
       </div>
     </section>
   `,
   styles: [`
-    /* Variables */
     :host {
-      --primary-color: #0c457a;
-      --primary-light: #1a6eb8;
-      --primary-dark: #093663;
-      --accent-color: #4CAF50;
-      --text-primary: #2c3e50;
-      --text-secondary: #64748b;
-      --background-light:rgb(255, 255, 255);
-      --border-color: #e2e8f0;
+      --primary: #1a5f7a;
+      --primary-light: #2c7a9c;
+      --primary-dark: #134559;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --danger: #dc2626;
+      --success: #059669;
+      --radius-lg: 1rem;
+      --radius-md: 0.5rem;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
     }
 
     .blog-section {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 4rem 2rem;
-      background: var(--background-light);
+      padding: 2rem;
     }
-    .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
 
-.delete-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: var(--primary-dark);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
-}
-.back-button:hover {
-  background: var(--primary-color);
-  color: white;
-  transform: translateX(-5px);
-}
-
-/* Delete Button */
-.delete-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: var(--primary-dark);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
-}
-.delete-button:hover {
-  background: #b23b3b;
-  transform: translateX(-5px);
-}
-.auth-code-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
-  transition: all 0.3s ease;
-}
-.auth-code-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(12, 69, 122, 0.1);
-}
-
-.modal-content button {
-  padding: 0.75rem 1.5rem;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
-}
-
-.modal-content button:hover {
-  background: var(--primary-light);
-  transform: translateY(-2px);
-}
-
-@media (max-width: 768px) {
-  .modal-content {
-    padding: 1.5rem;
-  }
-
-  .auth-code-input {
-    font-size: 0.9rem;
-  }
-
-  .modal-content button {
-    padding: 0.5rem 1.25rem;
-  }
-
-  .modal-content h2 {
-    font-size: 1.5rem;
-  }
-}
-
-    /* Back Button */
-    .back-button {
-      display: inline-flex;
+    /* Navigation */
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: white;
-      color: var(--primary-color);
-      border: 1px solid var(--border-color);
-      border-radius: 50px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
     }
 
-    .back-button:hover {
-      background: var(--primary-color);
+    .nav-button {
+      background: white;
+      border: 1px solid var(--gray-200);
+      padding: 0.75rem;
+      border-radius: 50%;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-button:hover {
+      background: var(--gray-100);
+      color: var(--primary);
+    }
+
+    .nav-button.active {
+      background: var(--primary);
       color: white;
-      transform: translateX(-5px);
+      border-color: var(--primary);
     }
 
     /* Header */
-    .blog-header {
+    .header {
       text-align: center;
       margin-bottom: 4rem;
     }
 
-    .blog-header h1 {
-      font-size: 2.75rem;
-      font-weight: 700;
-      color: var(--primary-color);
+    .header h1 {
+      font-size: 2.5rem;
+      color: var(--gray-800);
       margin-bottom: 1rem;
     }
 
-    .create-post-container {
-  display: flex;
-  justify-content: flex-end;
-  margin: 2rem 0;
-}
-
-.create-post-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.875rem 1.75rem;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.create-post-btn:hover {
-  background: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(12, 69, 122, 0.2);
-}
-
-.create-post-btn i {
-  font-size: 1rem;
-}
-
-@media (max-width: 768px) {
-  .create-post-container {
-    justify-content: center;
-  }
-}
-
-    .divider {
-      width: 60px;
-      height: 4px;
-      background: var(--primary-color);
-      margin: 1rem auto;
-      border-radius: 2px;
+    .header p {
+      color: var(--gray-600);
+      font-size: 1.125rem;
     }
 
-    .subtitle {
-      color: var(--text-secondary);
-      font-size: 1.1rem;
-      margin-bottom: 2.5rem;
+    /* Filters */
+    .filters {
+      margin-bottom: 3rem;
     }
 
-    /* Filter Controls */
-    .filter-controls {
-      max-width: 800px;
-      margin: 0 auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(12, 69, 122, 0.1);
-    }
-
-    .search-bar {
+    .search-wrapper {
       position: relative;
-      margin-bottom: 1.5rem;
+      max-width: 600px;
+      margin: 0 auto 2rem;
     }
 
-    .search-bar input {
+    .search-input {
       width: 100%;
       padding: 1rem 1rem 1rem 3rem;
-      border: 1px solid var(--border-color);
-      border-radius: 50px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
       font-size: 1rem;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
     }
 
-    .search-bar input:focus {
+    .search-input:focus {
       outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(12, 69, 122, 0.1);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
     }
 
-    .search-bar i {
+    .search-icon {
       position: absolute;
-      left: 1.2rem;
+      left: 1rem;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--primary-color);
+      color: var(--gray-600);
     }
 
-    .category-filters {
+    .tags-filter {
       display: flex;
       gap: 0.75rem;
       justify-content: center;
       flex-wrap: wrap;
     }
 
-    .filter-btn {
+    .tag-button {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      background: white;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tag-button:hover {
+      background: var(--gray-100);
+    }
+
+    .tag-button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Admin Controls */
+    .admin-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 2rem;
+    }
+
+    .admin-button {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.75rem 1.25rem;
-      border: 1px solid var(--border-color);
-      border-radius: 50px;
-      background: white;
-      color: var(--text-primary);
-      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-lg);
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
     }
 
-    .filter-btn i {
-      color: var(--primary-color);
+    .admin-button:hover {
+      background: var(--primary-light);
     }
 
-    .filter-btn.active {
-      background: var(--primary-color);
-      color: white;
-      border-color: transparent;
-    }
-
-    .filter-btn.active i {
-      color: white;
-    }
-
-    /* Featured Post */
-    .featured-post {
-      margin: 4rem 0;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 30px rgba(12, 69, 122, 0.15);
-    }
-
-    .featured-image {
-      height: 600px;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .featured-overlay {
-      height: 100%;
-      background: linear-gradient(to top, rgba(12, 69, 122, 0.9), transparent);
-      display: flex;
-      align-items: flex-end;
-      padding: 4rem;
-    }
-
-    .featured-content {
-      color: white;
-      max-width: 800px;
-    }
-
-    .featured-content h2 {
-      font-size: 2.5rem;
-      margin: 1rem 0;
-      line-height: 1.2;
-    }
-
-    /* Posts Grid */
-    .posts-grid {
+    /* Projects Grid */
+    .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 2rem;
-      margin: 3rem 0;
+      margin-bottom: 4rem;
     }
 
-    .post-card {
-      border-radius: 16px;
-      overflow: hidden;
+    .project-card {
       background: white;
-      box-shadow: 0 4px 20px rgba(12, 69, 122, 0.08);
-      transition: all 0.3s ease;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      transition: all 0.3s;
     }
 
-    .post-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 30px rgba(12, 69, 122, 0.12);
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
     }
 
     .card-image {
@@ -490,33 +341,65 @@ interface BlogPost {
       position: relative;
     }
 
-    .post-category {
+    .card-overlay {
       position: absolute;
-      top: 1rem;
-      left: 1rem;
-      background: var(--primary-color);
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      font-size: 0.875rem;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+      padding: 1rem;
       display: flex;
-      align-items: center;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .project-category {
+      background: rgba(255,255,255,0.9);
+      color: var(--primary);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .admin-actions {
+      display: flex;
       gap: 0.5rem;
     }
 
-    .card-content {
-      padding: 2rem;
+    .icon-button {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s;
     }
 
-    .post-meta {
+    .icon-button.delete {
+      background: var(--danger);
+      color: white;
+    }
+
+    .icon-button.edit {
+      background: var(--success);
+      color: white;
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    .meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-      color: var(--text-secondary);
     }
 
     .date {
+      color: var(--gray-600);
+      font-size: 0.875rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -528,137 +411,176 @@ interface BlogPost {
     }
 
     .tag {
-      background: var(--background-light);
+      background: var(--gray-100);
+      color: var(--gray-700);
       padding: 0.25rem 0.75rem;
-      border-radius: 50px;
+      border-radius: var(--radius-md);
       font-size: 0.75rem;
     }
 
     h3 {
-      font-size: 1.5rem;
-      color: var(--primary-color);
-      margin-bottom: 1rem;
-      line-height: 1.3;
+      color: var(--gray-800);
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
     }
 
-    /* Project Stats */
-    .project-stats {
+    p {
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      margin: 2rem 0;
-      padding: 1.5rem;
-      background: var(--background-light);
-      border-radius: 12px;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
     }
 
     .stat {
       text-align: center;
+      color: var(--gray-700);
     }
 
     .stat i {
-      font-size: 1.5rem;
-      color: var(--primary-color);
+      color: var(--primary);
       margin-bottom: 0.5rem;
     }
 
-    .stat-value {
-      display: block;
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--primary-color);
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
+    .stat span {
       font-size: 0.875rem;
-      color: var(--text-secondary);
+      display: block;
     }
 
-    /* Buttons */
-    .read-more {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.875rem 1.75rem;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .read-more:hover {
-      background: var(--primary-light);
-      transform: translateX(5px);
-    }
-
+    /* Load More */
     .load-more {
       text-align: center;
-      margin-top: 4rem;
+      margin-top: 3rem;
     }
 
-    .load-more-btn {
+    .load-button {
       display: inline-flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 1rem 2.5rem;
-      background: transparent;
-      color: var(--primary-color);
-      border: 2px solid var(--primary-color);
-      border-radius: 50px;
+      padding: 1rem 2rem;
+      background: white;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      border-radius: var(--radius-lg);
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
     }
 
-    .load-more-btn:hover {
-      background: var(--primary-color);
+    .load-button:hover {
+      background: var(--primary);
       color: white;
     }
 
-    .load-more-btn.loading {
+    .load-button.loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      z-index: 50;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius-lg);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .modal-content h2 {
+      color: var(--gray-800);
+      margin-bottom: 1rem;
+    }
+
+    .modal-content p {
+      color: var(--gray-600);
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .confirm-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .confirm-button:hover {
       background: var(--primary-light);
-      color: white;
-      border-color: transparent;
     }
 
-    /* Responsive Design */
-    @media (max-width: 992px) {
-      .posts-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    .cancel-button {
+      background: white;
+      color: var(--gray-700);
+      border: 1px solid var(--gray-200);
+    }
 
-      .featured-image {
-        height: 500px;
-      }
+    .cancel-button:hover {
+      background: var(--gray-100);
     }
 
     @media (max-width: 768px) {
       .blog-section {
-        padding: 2rem 1rem;
+        padding: 1rem;
       }
 
-      .featured-image {
-        height: 300px;
+      .header h1 {
+        font-size: 2rem;
       }
 
-      .featured-overlay {
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
         padding: 1.5rem;
-      }
-
-      .featured-content h2 {
-        font-size: 1.5rem;
-      }
-
-      .posts-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .project-stats {
-        grid-template-columns: 1fr;
       }
     }
   `]
@@ -667,21 +589,30 @@ export class BlogComponent implements OnInit {
   searchTerm: string = '';
   selectedCategory: string = 'Todos';
   categories: string[] = ['Todos', 'Proyectos', 'Artículos'];
-  featuredPost: BlogPost | null = null;
   posts: BlogPost[] = [];
   filteredPosts: BlogPost[] = [];
   hasMorePosts: boolean = true;
   loading: boolean = false;
   currentPage: number = 1;
-  postsPerPage: number = 10; // Number of posts per page for pagination
-  showDeleteModal = false;
-  authCode = ''; // Store the authCode here
-  postToDeleteId: number | null = null; // Store post ID for deletion
+  postsPerPage: number = 9;
+  showDeleteModal: boolean = false;
+  authCode: string = '';
+  postToDeleteId: number | null = null;
+  adminMode: boolean = false;
+  isAdmin: boolean = false; // This should be set based on user authentication
 
-  constructor(private blogService: BlogService, private router: Router) {}
+  constructor(
+    private blogService: BlogService, 
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadPosts();
+    this.isAdmin = true;
+  }
+
+  toggleAdminMode() {
+    this.adminMode = !this.adminMode;
   }
 
   loadPosts() {
@@ -689,12 +620,11 @@ export class BlogComponent implements OnInit {
     this.blogService.getPosts().subscribe({
       next: (posts) => {
         this.posts = posts;
-        this.featuredPost = posts[0]; // Assuming first post is featured
         this.filterPosts();
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error cargando posts:', error);
+        console.error('Error loading posts:', error);
         this.loading = false;
       }
     });
@@ -707,7 +637,8 @@ export class BlogComponent implements OnInit {
       const search = this.searchTerm.toLowerCase();
       filtered = filtered.filter(post =>
         post.title.toLowerCase().includes(search) ||
-        post.description.toLowerCase().includes(search)
+        post.description.toLowerCase().includes(search) ||
+        post.tags.some(tag => tag.toLowerCase().includes(search))
       );
     }
 
@@ -717,37 +648,41 @@ export class BlogComponent implements OnInit {
       );
     }
 
-    // Pagination logic: Only show the posts for the current page
     const startIndex = (this.currentPage - 1) * this.postsPerPage;
     const endIndex = startIndex + this.postsPerPage;
     this.filteredPosts = filtered.slice(startIndex, endIndex);
-
-    // Check if there are more posts to load
     this.hasMorePosts = filtered.length > endIndex;
   }
 
   selectCategory(category: string) {
     this.selectedCategory = category;
-    this.currentPage = 1; // Reset to the first page when category changes
+    this.currentPage = 1;
     this.filterPosts();
   }
 
+  loadMorePosts() {
+    if (this.hasMorePosts && !this.loading) {
+      this.currentPage++;
+      this.filterPosts();
+    }
+  }
+
+  openProject(post: BlogPost) {
+    this.router.navigate(['/project', post.id]);
+  }
+
+  editProject(id: number) {
+    this.router.navigate(['/edit-project', id]);
+  }
+
   goBack() {
-    this.router.navigate(['/']); // Navigate to the root (home) page
+    this.router.navigate(['/']);
   }
 
   goToCreatePost() {
     this.router.navigate(['/crearblog']);
   }
 
-  loadMorePosts() {
-    if (this.hasMorePosts && !this.loading) {
-      this.loading = true;
-      this.currentPage++;
-      this.filterPosts();  // Re-filter and load the next set of posts
-      this.loading = false;
-    }
-  }
   openDeleteModal(postId: number) {
     this.showDeleteModal = true;
     this.postToDeleteId = postId;
@@ -755,24 +690,23 @@ export class BlogComponent implements OnInit {
 
   closeDeleteModal() {
     this.showDeleteModal = false;
-    this.authCode = '';  // Reset the authCode input
+    this.authCode = '';
+    this.postToDeleteId = null;
   }
 
   deletePost() {
     if (this.authCode && this.postToDeleteId !== null) {
       this.blogService.deletePost(this.postToDeleteId, this.authCode).subscribe({
         next: () => {
-          // Successfully deleted the post
-          this.filteredPosts = this.filteredPosts.filter(post => post.id !== this.postToDeleteId);
-          this.closeDeleteModal();  // Close modal
+          this.posts = this.posts.filter(post => post.id !== this.postToDeleteId);
+          this.filterPosts();
+          this.closeDeleteModal();
         },
-        error: (err) => {
-          console.error('Failed to delete post:', err);
-          alert('No se pudo eliminar el post. Verifique el código de autenticación.');
-        },
+        error: (error) => {
+          console.error('Error deleting post:', error);
+          alert('Failed to delete post. Please check your authentication code.');
+        }
       });
-    } else {
-      alert('Por favor, ingrese un código de autenticación válido.');
     }
   }
 }

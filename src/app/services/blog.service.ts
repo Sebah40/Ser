@@ -8,6 +8,7 @@ export interface BlogPost {
   description: string;
   content: string;
   imageUrl: string;
+  contentImages: string[];  // Add this line
   category: 'project' | 'article';
   date: string;
   tags: string[];
@@ -22,7 +23,7 @@ export interface BlogPost {
   providedIn: 'root'
 })
 export class BlogService {
-  private apiUrl = 'http://localhost:8080/api/post';
+  private apiUrl = 'https://rigelecserback.onrender.com/api/post';
 
   constructor(private http: HttpClient) {}
 

@@ -20,7 +20,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
             <div class="contact-details">
               <div class="contact-item">
                 <i class="fas fa-map-marker-alt"></i>
-                <p>Las Heras 331, Concordia, Entre Ríos</p>
+                <p>Las Heras 331 Primer Piso, Concordia</p>
               </div>
               <a href="https://wa.me/message/6OHMJMTGTRMWP1" target="_blank" class="whatsapp-button">
                 <i class="fab fa-whatsapp"></i>

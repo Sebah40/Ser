@@ -33,6 +33,14 @@ import { CommonModule } from '@angular/common';
           <li><a href="#contacto" class="nav-link">Contacto</a></li>
           <li><a href="/blog" class="nav-link">Obras realizadas</a></li> <!-- Added Blog button -->
           <li>
+    <a href="https://rigelec.com.ar" 
+       target="_blank" 
+       class="rigelec-button">
+      Rigelec
+      <img src="./original.svg" alt="Rigelec" class="rigelec-icon" />
+    </a>
+  </li>
+          <li>
             <a
               href="https://tienda.rigelec.com.ar/?product_cat=8-kits-solares"
               target="_blank"
@@ -107,6 +115,45 @@ import { CommonModule } from '@angular/common';
       .logo-img:hover {
         transform: scale(1.05);
       }
+
+      .rigelec-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background:rgb(39, 56, 50);  /* Using your primary blue color */
+  color: white;
+  padding: 0.5rem 1.25rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.rigelec-button:hover {
+  background: rgb(70, 82, 77); /* Lighter blue for hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.rigelec-icon {
+  height: 16px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.rigelec-button:hover .rigelec-icon {
+  transform: translateY(-1px);
+}
+
+/* Update mobile styles */
+@media (max-width: 768px) {
+  .rigelec-button {
+    padding: 0.5rem 1.25rem;
+    font-size: 1rem;
+  }
+}
 
       .nav-links {
         display: flex;

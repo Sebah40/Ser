@@ -19,6 +19,7 @@ interface CreatePostRequest {
   description: string;
   content: string;
   imageUrl: string;
+  contentImages: string[];  // Array of image URLs
   category: 'proyecto' | 'artículo';
   date: string;
   tags: string[];
@@ -34,6 +35,7 @@ interface Post {
   description: string;
   content: string;
   imageUrl: string;
+  contentImages: string[];  // Array of strings
   category: string;
   date: string;
   tags: string[];
@@ -46,7 +48,8 @@ interface Post {
   providedIn: 'root'
 })
 export class BlogCreateService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = 'https://rigelecserback.onrender.com/api/auth';
+  private postsUrl = 'https://rigelecserback.onrender.com/api';
 
   constructor(private http: HttpClient) {}
 
@@ -56,6 +59,34 @@ export class BlogCreateService {
   }
 
   verifyAndCreatePost(postData: CreatePostRequest): Observable<Post> {
+    // No need to transform contentImages as they're already strings
     return this.http.post<Post>(`${this.apiUrl}/verify-and-create`, postData);
+  }
+
+  updateContentImages(postId: number, imageUrls: string[]): Observable<Post> {
+    // Send array of strings directly
+    return this.http.patch<Post>(`${this.postsUrl}/${postId}/content-images`, imageUrls);
+  }
+
+  getContentImages(postId: number): Observable<string[]> {
+    return this.http.get<string[]>(`${this.postsUrl}/${postId}/content-images`);
+  }
+
+  uploadImage(file: File): Observable<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string }>(`${this.apiUrl}/upload-image`, formData);
+  }
+
+  deleteContentImage(postId: number, imageUrl: string): Observable<void> {
+    // Changed to use imageUrl instead of imageId
+    return this.http.delete<void>(`${this.postsUrl}/${postId}/content-images`, {
+      params: { url: imageUrl }
+    });
+  }
+
+  updatePost(postId: number, postData: Partial<CreatePostRequest>): Observable<Post> {
+    // No need to transform contentImages
+    return this.http.put<Post>(`${this.postsUrl}/${postId}`, postData);
   }
 }
