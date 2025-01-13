@@ -562,7 +562,7 @@ export class SolutionsComponent implements OnInit {
         { value: '80%', label: 'Ahorro' },
         { value: '4-6', label: 'Años para recuperar inversión' },
         { value: '0', label: 'Mantenimiento' },
-        { value: '10+', label: 'Años de vida útil' }
+        { value: '15+', label: 'Años de vida útil' }
       ]
     },
     {
@@ -576,7 +576,7 @@ export class SolutionsComponent implements OnInit {
         { value: '100%', label: 'Solar' },
         { value: '8h', label: 'Bombeo diario' },
         { value: '40m', label: 'Altura máx.' },
-        { value: '10+', label: 'Años de vida útil' }
+        { value: '15+', label: 'Años de vida útil' }
       ]
     }
   ];

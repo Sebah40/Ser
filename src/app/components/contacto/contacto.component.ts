@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-contacto',
@@ -22,9 +27,13 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
                 <i class="fas fa-map-marker-alt"></i>
                 <p>Las Heras 331 Primer Piso, Concordia</p>
               </div>
-              <a href="https://wa.me/message/6OHMJMTGTRMWP1" target="_blank" class="whatsapp-button">
+              <a
+                href="https://wa.me/message/6OHMJMTGTRMWP1/?text=hola%2C%20quer%C3%ADa%20consultar%20sobre%3A%20"
+                target="_blank"
+                class="whatsapp-button"
+              >
                 <i class="fab fa-whatsapp"></i>
-                <span>Chatea con nosotros</span>
+                <span>¿Tienes algún plan?</span>
               </a>
             </div>
           </div>
@@ -72,7 +81,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 
                 <div class="form-group">
                   <select formControlName="subject" name="subject">
-                    <option value="" disabled selected>Motivo de contacto *</option>
+                    <option value="" disabled selected>
+                      Motivo de contacto *
+                    </option>
                     <option value="info">Información general</option>
                     <option value="quote">Solicitar presupuesto</option>
                     <option value="support">Soporte técnico</option>
@@ -94,11 +105,10 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
                 </small>
               </div>
 
-              <button
-                type="submit"
-                [class.submitting]="isSubmitting"
-              >
-                <span>{{ isSubmitting ? 'Enviando...' : 'Enviar mensaje' }}</span>
+              <button type="submit" [class.submitting]="isSubmitting">
+                <span>{{
+                  isSubmitting ? 'Enviando...' : 'Enviar mensaje'
+                }}</span>
               </button>
             </form>
           </div>
@@ -116,244 +126,258 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
       </div>
     </section>
   `,
-  styles: [`
-    .contact-container {
-      min-height: 80vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 4rem 1rem;
-    }
+  styles: [
+    `
+      .contact-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 1rem;
+      }
 
-    .contact-content {
-      max-width: 1000px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1.5fr;
-      gap: 3rem;
-      background: white;
-      border-radius: 16px;
-      padding: 2.5rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .contact-info {
-      padding-right: 2rem;
-      border-right: 1px solid #edf2f7;
-    }
-
-    .contact-info h2 {
-      font-size: 2.2rem;
-      color: #0c457a;
-      margin-bottom: 1rem;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      color: #64748b;
-      font-size: 1rem;
-      line-height: 1.5;
-      margin-bottom: 2rem;
-    }
-
-    .contact-details {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      color: #64748b;
-    }
-
-    .contact-item i {
-      color: #0c457a;
-      font-size: 1.2rem;
-    }
-
-    .whatsapp-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: #25D366;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
-    }
-
-    .whatsapp-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
-    }
-
-    .whatsapp-button i {
-      font-size: 1.3rem;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      transition: all 0.3s ease;
-      background: #f8fafc;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #0c457a;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(12, 69, 122, 0.1);
-    }
-
-    .invalid {
-      border-color: #ef4444;
-    }
-
-    .error-message {
-      color: #ef4444;
-      font-size: 0.75rem;
-      margin-top: 0.25rem;
-    }
-
-    button[type="submit"] {
-      width: 100%;
-      padding: 0.875rem;
-      background: #0c457a;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    button[type="submit"]:hover:not(:disabled) {
-      background: #0d5499;
-      transform: translateY(-1px);
-    }
-
-    button[type="submit"]:disabled {
-      background: #94a3b8;
-      cursor: not-allowed;
-    }
-
-    .submitting {
-      position: relative;
-    }
-
-    .submitting span {
-      opacity: 0;
-    }
-
-    .submitting::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      top: 50%;
-      left: 50%;
-      margin: -10px 0 0 -10px;
-      border: 2px solid white;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spinner 0.8s linear infinite;
-    }
-
-    /* Modal styles */
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 2rem;
-      border-radius: 16px;
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                  0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-
-    .success-icon {
-      width: 60px;
-      height: 60px;
-      background: #22c55e;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      margin: 0 auto 1.5rem;
-    }
-
-    .modal-button {
-      margin-top: 1.5rem;
-      padding: 0.75rem 2rem;
-      background: #0c457a;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    @media (max-width: 768px) {
       .contact-content {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-        padding: 1.5rem;
+        max-width: 1000px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 3rem;
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       }
 
       .contact-info {
-        padding-right: 0;
-        border-right: none;
-        border-bottom: 1px solid #edf2f7;
-        padding-bottom: 2rem;
+        padding-right: 2rem;
+        border-right: 1px solid #edf2f7;
+      }
+
+      .contact-info h2 {
+        font-size: 2.2rem;
+        color: #0c457a;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        color: #64748b;
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 2rem;
+      }
+
+      .contact-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: #64748b;
+      }
+
+      .contact-item i {
+        color: #0c457a;
+        font-size: 1.2rem;
+      }
+
+      .whatsapp-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #309b5c;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px #000000;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+
+      .whatsapp-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        background: #128c7e;
+      }
+
+      .whatsapp-button i {
+        font-size: 1.3rem;
+      }
+
+      @media (max-width: 768px) {
+        .whatsapp-button {
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+        }
       }
 
       .form-row {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
       }
-    }
-  `]
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #0c457a;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(12, 69, 122, 0.1);
+      }
+
+      .invalid {
+        border-color: #ef4444;
+      }
+
+      .error-message {
+        color: #ef4444;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+      }
+
+      button[type='submit'] {
+        width: 100%;
+        padding: 0.875rem;
+        background: #0c457a;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button[type='submit']:hover:not(:disabled) {
+        background: #0d5499;
+        transform: translateY(-1px);
+      }
+
+      button[type='submit']:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+      }
+
+      .submitting {
+        position: relative;
+      }
+
+      .submitting span {
+        opacity: 0;
+      }
+
+      .submitting::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin: -10px 0 0 -10px;
+        border: 2px solid white;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spinner 0.8s linear infinite;
+      }
+
+      /* Modal styles */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      .success-icon {
+        width: 60px;
+        height: 60px;
+        background: #22c55e;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 auto 1.5rem;
+      }
+
+      .modal-button {
+        margin-top: 1.5rem;
+        padding: 0.75rem 2rem;
+        background: #0c457a;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      @media (max-width: 768px) {
+        .contact-content {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+          padding: 1.5rem;
+        }
+
+        .contact-info {
+          padding-right: 0;
+          border-right: none;
+          border-bottom: 1px solid #edf2f7;
+          padding-bottom: 2rem;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    `,
+  ],
 })
 export class ContactoComponent implements OnInit {
   contactForm!: FormGroup;
@@ -386,7 +410,7 @@ export class ContactoComponent implements OnInit {
         this.contactForm.reset();
       }, 1000);
     } else {
-      Object.keys(this.contactForm.controls).forEach(key => {
+      Object.keys(this.contactForm.controls).forEach((key) => {
         const control = this.contactForm.get(key);
         if (control) {
           control.markAsTouched();

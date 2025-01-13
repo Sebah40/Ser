@@ -22,26 +22,52 @@ body {
 
 .whatsapp-button {
   position: fixed;
-  bottom: 20px;  /* Distance from the bottom */
-  right: 20px;   /* Distance from the right */
-  background-color: #25D366; /* WhatsApp color */
-  border-radius: 50%; /* Round button */
-  padding: 15px;  /* Sufficient padding to make the button bigger */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds some shadow to the button */
-  z-index: 9999; /* Make sure it's on top of other content */
+  bottom: 20px;
+  right: 20px;
+  background-color: rgb(47, 66, 108);
+  border-radius: 50px; /* More rounded corners like in the image */
+  padding: 12px 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
   cursor: pointer;
-  transition: transform 0.3s ease-in-out;  /* Optional: Adds smooth hover effect */
+  transition: all 0.3s ease;
+  text-decoration: none;
+  border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .whatsapp-button:hover {
-  transform: scale(1.1); /* Slightly increase the button size on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  background-color: rgb(57, 76, 118);
 }
 
 .whatsapp-button svg {
-  fill: white; /* White color for the WhatsApp icon */
-  width: 40px;  /* Set the size of the icon */
-  height: 40px;  /* Set the size of the icon */
+  fill: white;
+  width: 24px;
+  height: 24px;
+}
+
+.whatsapp-button span {
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .whatsapp-button {
+    padding: 10px 20px;
+  }
+  
+  .whatsapp-button span {
+    font-size: 14px;
+  }
+  
+  .whatsapp-button svg {
+    width: 20px;
+    height: 20px;
+  }
 }

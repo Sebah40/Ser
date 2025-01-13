@@ -1,20 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { switchMap } from 'rxjs/operators';
-import { interval, Subscription } from 'rxjs';
-
-interface Feature {
-  icon: string;
-  title: string;
-  description: string;
-}
-
-interface GrowattData {
-  eTotal: number;
-  pac: number;
-  eToday: number;
-}
+import { interval, Subscription, EMPTY } from 'rxjs';
+import { switchMap } from 'rxjs/operators';import { GrowattService } from '../../growatt.service';
+import { GrowattData } from '../../growatt-data';
 
 @Component({
   selector: 'app-about',
@@ -62,96 +50,70 @@ interface GrowattData {
                   <p>{{ getCurrentTab().content }}</p>
                 </div>
               </div>
-
-              <!-- <button class="learn-more-btn" (click)="openModal()">
-                Nuestros valores
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="arrow-icon"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </button> -->
             </div>
           </div>
 
           <!-- Energy Stats Column -->
-          <div class="energy-stats-column">
-            <!-- Energy Impact Stats -->
-            <div class="energy-stats-container" *ngIf="!isLoading">
-              <div class="energy-stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-bolt"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>Energía total generada</h3>
-                  <div class="stat-value1">202 MWh</div>
-                </div>
-              </div>
+      <div class="energy-stats-column">
+        <!-- Energy Impact Stats -->
+        <div class="energy-stats-container" *ngIf="!isLoading && data">
+          <div class="energy-stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Energía total generada</h3>
+              <div class="stat-value1">{{ data.etotalSum.toFixed(1) }} kWh</div>
+            </div>
+          </div>
 
-              <div class="energy-stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-leaf"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>Reducción de CO2</h3>
-                  <div class="stat-value1">
-                    83000 Kg
-                  </div>
-                </div>
-              </div>
-
-              <div class="energy-stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-tree"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>Árboles Salvados</h3>
-                  <div class="stat-value1">
-                    11100 Árboles
-                  </div>
-                </div>
-              </div>
-
-              <div class="energy-stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-sun"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>Energía diaria</h3>
-                  <div class="stat-value1">750 kWh</div>
-                </div>
+          <div class="energy-stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-leaf"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Reducción de CO2</h3>
+              <div class="stat-value1">
+                {{ calculateCO2Reduction(data.etotalSum).toFixed(1) }} kg
               </div>
             </div>
+          </div>
 
-            <!-- Loading indicator for energy stats -->
-            <div *ngIf="isLoading" class="loading-container">
-              <div class="loader"></div>
+          <div class="energy-stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-tree"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Árboles equivalentes</h3>
+              <div class="stat-value1">
+                {{ calculateTreesEquivalent(data.etotalSum).toFixed(0) }}
+              </div>
+            </div>
+          </div>
+
+          <div class="energy-stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-sun"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Ahorro total</h3>
+              <div class="stat-value1">{{ formatMoney(data.etotalMoneyText) }}</div>
             </div>
           </div>
         </div>
 
-        <!-- Feature Cards -->
-        <div class="features-container" [class.visible]="isVisible">
-          <div class="feature-card" *ngFor="let feature of features">
-            <div class="feature-icon" [innerHTML]="feature.icon"></div>
-            <h3 class="feature-title">{{ feature.title }}</h3>
-            <p class="feature-description">{{ feature.description }}</p>
-          </div>
+        <!-- Loading indicator -->
+        <div *ngIf="isLoading" class="loading-container">
+          <div class="loader"></div>
         </div>
+      </div>
+        </div>
+
+
 
         <!-- Modal Component -->
         <div class="modal-overlay" *ngIf="isModalVisible" (click)="closeModal()">
-          <!-- Modal content remains the same -->
+          <!-- Modal content here if needed -->
         </div>
       </div>
     </section>
@@ -646,24 +608,23 @@ interface GrowattData {
     `,
   ],
 })
-export class AboutComponent implements OnInit {
+export class AboutComponent implements OnInit, OnDestroy {
   isVisible = false;
   activeTab = 'vision';
   tabContentVisible = false;
   isModalVisible = false;
   isLoading = true;
+  data: GrowattData | null = null;
+  private dataSubscription: Subscription = new Subscription();
 
-  private dataSubscription?: Subscription;
+  private readonly CO2_PER_KWH = 0.4;
+  private readonly TREES_PER_TON_CO2 = 45;
+  private readonly MONEY_PER_KWH = 0.21;
+  private readonly GUARANI_TO_USD = 7300;
   stats = [
     { value: '+500 kW', label: 'Paneles solares instalados' },
     { value: '+100 kWh', label: 'Baterías para sistemas aislados en el campo' },
   ];
-
-  growattData: GrowattData = {
-    eTotal: 0,
-    pac: 0,
-    eToday: 0,
-  };
 
   tabs = [
     {
@@ -701,50 +662,68 @@ export class AboutComponent implements OnInit {
     },
   ];
 
-  constructor(private http: HttpClient) {
-    // Initialize tab content visibility after a short delay
+  constructor(private growattService: GrowattService) {
     setTimeout(() => {
       this.tabContentVisible = true;
     }, 400);
   }
 
+  
+
   ngOnInit() {
     setTimeout(() => {
       this.isVisible = true;
     }, 100);
+
+    // Initial data fetch
     this.fetchData();
-    this.startDataPolling();
+    // Start polling every minute
+    this.startPolling();
   }
+  
 
   ngOnDestroy() {
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
   }
-  private fetchData() {
-    this.http.get<GrowattData>('/api/growatt').subscribe({
-      next: (data) => {
-        this.growattData = data;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error fetching Growatt data:', error);
-        this.isLoading = false;
-      },
-    });
+
+  private fetchData(): void {
+    this.isLoading = true;
+    const subscription = this.growattService.getData()
+      .subscribe({
+        next: (response) => {
+          if (response) {
+            this.data = response;
+          }
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching Growatt data:', error);
+          this.isLoading = false;
+        }
+      });
+
+    this.dataSubscription.add(subscription);
   }
 
-  private startDataPolling() {
-    this.dataSubscription = interval(60000)
-      .pipe(switchMap(() => this.http.get<GrowattData>('/api/growatt')))
+  private startPolling(): void {
+    const pollingSubscription = interval(60000)
+      .pipe(
+        switchMap(() => this.growattService.getData())
+      )
       .subscribe({
-        next: (data) => {
-          this.growattData = data;
+        next: (response) => {
+          if (response) {
+            this.data = response;
+          }
         },
         error: (error) => {
           console.error('Error polling Growatt data:', error);
-        },
+        }
       });
+
+    this.dataSubscription.add(pollingSubscription);
   }
 
   setActiveTab(tabId: string) {
@@ -761,12 +740,10 @@ export class AboutComponent implements OnInit {
 
   onFeatureClick(feature: any) {
     console.log('Feature clicked:', feature.title);
-    // Add your navigation or modal logic here
   }
 
   onLearnMoreClick() {
     console.log('Learn more clicked');
-    // Add your navigation or modal logic here
   }
 
   scrollIntoView(elementRef: any) {
@@ -779,5 +756,22 @@ export class AboutComponent implements OnInit {
 
   closeModal() {
     this.isModalVisible = false;
+  }
+  calculateCO2Reduction(totalEnergy: number): number {
+    return totalEnergy * this.CO2_PER_KWH;
+  }
+
+  calculateTreesEquivalent(totalEnergy: number): number {
+    const co2Reduction = this.calculateCO2Reduction(totalEnergy);
+    return (co2Reduction / 1000) * this.TREES_PER_TON_CO2;
+  }
+
+  formatMoney(amount: string): string {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(parseFloat(amount));
   }
 }
