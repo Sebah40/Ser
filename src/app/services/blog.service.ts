@@ -12,11 +12,9 @@ export interface BlogPost {
   category: 'project' | 'article';
   date: string;
   tags: string[];
-  stats?: {
-    powerOutput?: string;
-    panelsInstalled?: number;
-    costSavings?: string;
-  };
+  powerOutput?: string;
+  panelsInstalled?: number;
+  costSavings?: string;
 }
 
 @Injectable({

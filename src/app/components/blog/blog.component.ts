@@ -14,11 +14,9 @@ interface BlogPost {
   category: 'project' | 'article';
   date: string;
   tags: string[];
-  stats?: {
     powerOutput?: string;
     panelsInstalled?: number;
     costSavings?: string;
-  };
 }
 
 @Component({
@@ -106,18 +104,22 @@ interface BlogPost {
             <h3>{{ post.title }}</h3>
             <p>{{ post.description }}</p>
 
-            <div *ngIf="post.stats" class="stats">
-              <div class="stat">
+            <!-- Project Stats - Only show for projects -->
+            <div *ngIf="post.category === 'project'" class="stats">
+              <div class="stat" *ngIf="post.powerOutput">
                 <i class="fas fa-solar-panel"></i>
-                <span>{{ post.stats.powerOutput }}</span>
+                <span class="stat-value">{{ post.powerOutput }} kW</span>
+                <span class="stat-label">Potencia</span>
               </div>
-              <div class="stat">
+              <div class="stat" *ngIf="post.panelsInstalled">
                 <i class="fas fa-plug"></i>
-                <span>{{ post.stats.panelsInstalled }} paneles</span>
+                <span class="stat-value">{{ post.panelsInstalled }}</span>
+                <span class="stat-label">Paneles</span>
               </div>
-              <div class="stat">
+              <div class="stat" *ngIf="post.costSavings">
                 <i class="fas fa-leaf"></i>
-                <span>{{ post.stats.costSavings }} ahorro</span>
+                <span class="stat-value">{{ post.costSavings }}%</span>
+                <span class="stat-label">Generación</span>
               </div>
             </div>
           </div>
@@ -157,432 +159,371 @@ interface BlogPost {
   `,
   styles: [`
     :host {
-      --primary: #1a5f7a;
-      --primary-light: #2c7a9c;
-      --primary-dark: #134559;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-300: #d1d5db;
-      --gray-600: #4b5563;
-      --gray-700: #374151;
-      --gray-800: #1f2937;
-      --danger: #dc2626;
-      --success: #059669;
-      --radius-lg: 1rem;
-      --radius-md: 0.5rem;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+     --primary: #1a5f7a;
+     --primary-light: #2c7a9c;
+     --primary-dark: #134559;
+     --gray-100: #f3f4f6;
+     --gray-200: #e5e7eb;
+     --gray-300: #d1d5db;
+     --gray-600: #4b5563;
+     --gray-700: #374151;
+     --gray-800: #1f2937;
+     --danger: #dc2626;
+     --success: #059669;
+     --radius-lg: 1rem;
+     --radius-md: 0.5rem;
+     --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+     --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+     --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+}
+ .blog-section {
+     max-width: 1400px;
+     margin: 0 auto;
+     padding: 2rem;
+}
+/* Navigation */
+ .nav-bar {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 3rem;
+}
+ .nav-button {
+     background: white;
+     border: 1px solid var(--gray-200);
+     padding: 0.75rem;
+     border-radius: 50%;
+     color: var(--gray-600);
+     cursor: pointer;
+     transition: all 0.2s;
+}
+ .nav-button:hover {
+     background: var(--gray-100);
+     color: var(--primary);
+}
+ .nav-button.active {
+     background: var(--primary);
+     color: white;
+     border-color: var(--primary);
+}
+/* Header */
+ .header {
+     text-align: center;
+     margin-bottom: 4rem;
+}
+ .header h1 {
+     font-size: 2.5rem;
+     color: var(--gray-800);
+     margin-bottom: 1rem;
+}
+ .header p {
+     color: var(--gray-600);
+     font-size: 1.125rem;
+}
+/* Filters */
+ .filters {
+     margin-bottom: 3rem;
+}
+ .search-wrapper {
+     position: relative;
+     max-width: 600px;
+     margin: 0 auto 2rem;
+}
+ .search-input {
+     width: 100%;
+     padding: 1rem 1rem 1rem 3rem;
+     border: 1px solid var(--gray-200);
+     border-radius: var(--radius-lg);
+     font-size: 1rem;
+     transition: all 0.2s;
+}
+ .search-input:focus {
+     outline: none;
+     border-color: var(--primary);
+     box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+}
+ .search-icon {
+     position: absolute;
+     left: 1rem;
+     top: 50%;
+     transform: translateY(-50%);
+     color: var(--gray-600);
+}
+ .tags-filter {
+     display: flex;
+     gap: 0.75rem;
+     justify-content: center;
+     flex-wrap: wrap;
+}
+ .tag-button {
+     padding: 0.75rem 1.5rem;
+     border: 1px solid var(--gray-200);
+     border-radius: var(--radius-lg);
+     background: white;
+     color: var(--gray-700);
+     cursor: pointer;
+     transition: all 0.2s;
+}
+ .tag-button:hover {
+     background: var(--gray-100);
+}
+ .tag-button.active {
+     background: var(--primary);
+     color: white;
+     border-color: var(--primary);
+}
+/* Admin Controls */
+ .admin-controls {
+     display: flex;
+     justify-content: flex-end;
+     margin-bottom: 2rem;
+}
+ .admin-button {
+     display: inline-flex;
+     align-items: center;
+     gap: 0.5rem;
+     padding: 0.75rem 1.5rem;
+     background: var(--primary);
+     color: white;
+     border: none;
+     border-radius: var(--radius-lg);
+     cursor: pointer;
+     transition: all 0.2s;
+}
+ .admin-button:hover {
+     background: var(--primary-light);
+}
+/* Projects Grid */
+ .projects-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+     gap: 2rem;
+     margin-bottom: 4rem;
+}
+ .project-card {
+     background: white;
+     border-radius: var(--radius-lg);
+     overflow: hidden;
+     box-shadow: var(--shadow-md);
+     cursor: pointer;
+     transition: all 0.3s;
+}
+ .project-card:hover {
+     transform: translateY(-4px);
+     box-shadow: var(--shadow-lg);
+}
+ .card-image {
+     height: 240px;
+     background-size: cover;
+     background-position: center;
+     position: relative;
+}
+ .card-overlay {
+     position: absolute;
+     inset: 0;
+     background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+     padding: 1rem;
+     display: flex;
+     justify-content: space-between;
+     align-items: flex-start;
+}
+ .project-category {
+     background: rgba(255,255,255,0.9);
+     color: var(--primary);
+     padding: 0.5rem 1rem;
+     border-radius: var(--radius-md);
+     font-size: 0.875rem;
+     font-weight: 500;
+}
+ .admin-actions {
+     display: flex;
+     gap: 0.5rem;
+}
+ .icon-button {
+     width: 2.5rem;
+     height: 2.5rem;
+     border-radius: 50%;
+     border: none;
+     cursor: pointer;
+     display: grid;
+     place-items: center;
+     transition: all 0.2s;
+}
+ .icon-button.delete {
+     background: var(--danger);
+     color: white;
+}
+ .icon-button.edit {
+     background: var(--success);
+     color: white;
+}
+ .card-content {
+     padding: 1.5rem;
+}
+ .meta {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 1rem;
+}
+ .date {
+     color: var(--gray-600);
+     font-size: 0.875rem;
+     display: flex;
+     align-items: center;
+     gap: 0.5rem;
+}
+ .tags {
+     display: flex;
+     gap: 0.5rem;
+}
+ .tag {
+     background: var(--gray-100);
+     color: var(--gray-700);
+     padding: 0.25rem 0.75rem;
+     border-radius: var(--radius-md);
+     font-size: 0.75rem;
+}
+ h3 {
+     color: var(--gray-800);
+     font-size: 1.25rem;
+     margin-bottom: 0.75rem;
+     line-height: 1.4;
+}
+ p {
+     color: var(--gray-600);
+     line-height: 1.6;
+     margin-bottom: 1.5rem;
+}
+ .stats {
+     display: grid;
+     grid-template-columns: repeat(3, 1fr);
+     gap: 1rem;
+     padding: 1rem;
+     background: var(--gray-100);
+     border-radius: var(--radius-md);
+}
+ .stat {
+     text-align: center;
+     color: var(--gray-700);
+}
+ .stat i {
+     color: var(--primary);
+     margin-bottom: 0.5rem;
+}
+ .stat span {
+     font-size: 0.875rem;
+     display: block;
+}
+/* Load More */
+ .load-more {
+     text-align: center;
+     margin-top: 3rem;
+}
+ .load-button {
+     display: inline-flex;
+     align-items: center;
+     gap: 0.75rem;
+     padding: 1rem 2rem;
+     background: white;
+     border: 2px solid var(--primary);
+     color: var(--primary);
+     border-radius: var(--radius-lg);
+     font-weight: 500;
+     cursor: pointer;
+     transition: all 0.2s;
+}
+ .load-button:hover {
+     background: var(--primary);
+     color: white;
+}
+ .load-button.loading {
+     opacity: 0.7;
+     cursor: not-allowed;
+}
+/* Modal */
+ .modal {
+     position: fixed;
+     inset: 0;
+     background: rgba(0,0,0,0.5);
+     display: grid;
+     place-items: center;
+     padding: 1rem;
+     z-index: 50;
+}
+ .modal-content {
+     background: white;
+     padding: 2rem;
+     border-radius: var(--radius-lg);
+     max-width: 400px;
+     width: 100%;
+}
+ .modal-content h2 {
+     color: var(--gray-800);
+     margin-bottom: 1rem;
+}
+ .modal-content p {
+     color: var(--gray-600);
+     margin-bottom: 1.5rem;
+}
+ .auth-input {
+     width: 100%;
+     padding: 0.75rem 1rem;
+     border: 1px solid var(--gray-200);
+     border-radius: var(--radius-md);
+     margin-bottom: 1.5rem;
+}
+ .auth-input:focus {
+     outline: none;
+     border-color: var(--primary);
+     box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+}
+ .modal-actions {
+     display: flex;
+     gap: 1rem;
+}
+ .modal-actions button {
+     flex: 1;
+     padding: 0.75rem;
+     border-radius: var(--radius-md);
+     font-weight: 500;
+     cursor: pointer;
+     transition: all 0.2s;
+}
+ .confirm-button {
+     background: var(--primary);
+     color: white;
+     border: none;
+}
+ .confirm-button:hover {
+     background: var(--primary-light);
+}
+ .cancel-button {
+     background: white;
+     color: var(--gray-700);
+     border: 1px solid var(--gray-200);
+}
+ .cancel-button:hover {
+     background: var(--gray-100);
+}
+ @media (max-width: 768px) {
+     .blog-section {
+         padding: 1rem;
     }
-
-    .blog-section {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
+     .header h1 {
+         font-size: 2rem;
     }
-
-    /* Navigation */
-    .nav-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 3rem;
+     .projects-grid {
+         grid-template-columns: 1fr;
     }
-
-    .nav-button {
-      background: white;
-      border: 1px solid var(--gray-200);
-      padding: 0.75rem;
-      border-radius: 50%;
-      color: var(--gray-600);
-      cursor: pointer;
-      transition: all 0.2s;
+     .stats {
+         grid-template-columns: 1fr;
     }
-
-    .nav-button:hover {
-      background: var(--gray-100);
-      color: var(--primary);
+     .modal-content {
+         padding: 1.5rem;
     }
+}
 
-    .nav-button.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    /* Header */
-    .header {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-
-    .header h1 {
-      font-size: 2.5rem;
-      color: var(--gray-800);
-      margin-bottom: 1rem;
-    }
-
-    .header p {
-      color: var(--gray-600);
-      font-size: 1.125rem;
-    }
-
-    /* Filters */
-    .filters {
-      margin-bottom: 3rem;
-    }
-
-    .search-wrapper {
-      position: relative;
-      max-width: 600px;
-      margin: 0 auto 2rem;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 1rem 1rem 1rem 3rem;
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      font-size: 1rem;
-      transition: all 0.2s;
-    }
-
-    .search-input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--gray-600);
-    }
-
-    .tags-filter {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .tag-button {
-      padding: 0.75rem 1.5rem;
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      background: white;
-      color: var(--gray-700);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .tag-button:hover {
-      background: var(--gray-100);
-    }
-
-    .tag-button.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    /* Admin Controls */
-    .admin-controls {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 2rem;
-    }
-
-    .admin-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: var(--radius-lg);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .admin-button:hover {
-      background: var(--primary-light);
-    }
-
-    /* Projects Grid */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 2rem;
-      margin-bottom: 4rem;
-    }
-
-    .project-card {
-      background: white;
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .project-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .card-image {
-      height: 240px;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-    }
-
-    .card-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .project-category {
-      background: rgba(255,255,255,0.9);
-      color: var(--primary);
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius-md);
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    .admin-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .icon-button {
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      transition: all 0.2s;
-    }
-
-    .icon-button.delete {
-      background: var(--danger);
-      color: white;
-    }
-
-    .icon-button.edit {
-      background: var(--success);
-      color: white;
-    }
-
-    .card-content {
-      padding: 1.5rem;
-    }
-
-    .meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .date {
-      color: var(--gray-600);
-      font-size: 0.875rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .tags {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .tag {
-      background: var(--gray-100);
-      color: var(--gray-700);
-      padding: 0.25rem 0.75rem;
-      border-radius: var(--radius-md);
-      font-size: 0.75rem;
-    }
-
-    h3 {
-      color: var(--gray-800);
-      font-size: 1.25rem;
-      margin-bottom: 0.75rem;
-      line-height: 1.4;
-    }
-
-    p {
-      color: var(--gray-600);
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      padding: 1rem;
-      background: var(--gray-100);
-      border-radius: var(--radius-md);
-    }
-
-    .stat {
-      text-align: center;
-      color: var(--gray-700);
-    }
-
-    .stat i {
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .stat span {
-      font-size: 0.875rem;
-      display: block;
-    }
-
-    /* Load More */
-    .load-more {
-      text-align: center;
-      margin-top: 3rem;
-    }
-
-    .load-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem 2rem;
-      background: white;
-      border: 2px solid var(--primary);
-      color: var(--primary);
-      border-radius: var(--radius-lg);
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .load-button:hover {
-      background: var(--primary);
-      color: white;
-    }
-
-    .load-button.loading {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    /* Modal */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: grid;
-      place-items: center;
-      padding: 1rem;
-      z-index: 50;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 2rem;
-      border-radius: var(--radius-lg);
-      max-width: 400px;
-      width: 100%;
-    }
-
-    .modal-content h2 {
-      color: var(--gray-800);
-      margin-bottom: 1rem;
-    }
-
-    .modal-content p {
-      color: var(--gray-600);
-      margin-bottom: 1.5rem;
-    }
-
-    .auth-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-md);
-      margin-bottom: 1.5rem;
-    }
-
-    .auth-input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .modal-actions button {
-      flex: 1;
-      padding: 0.75rem;
-      border-radius: var(--radius-md);
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .confirm-button {
-      background: var(--primary);
-      color: white;
-      border: none;
-    }
-
-    .confirm-button:hover {
-      background: var(--primary-light);
-    }
-
-    .cancel-button {
-      background: white;
-      color: var(--gray-700);
-      border: 1px solid var(--gray-200);
-    }
-
-    .cancel-button:hover {
-      background: var(--gray-100);
-    }
-
-    @media (max-width: 768px) {
-      .blog-section {
-        padding: 1rem;
-      }
-
-      .header h1 {
-        font-size: 2rem;
-      }
-
-      .projects-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stats {
-        grid-template-columns: 1fr;
-      }
-
-      .modal-content {
-        padding: 1.5rem;
-      }
-    }
   `]
 })
 export class BlogComponent implements OnInit {

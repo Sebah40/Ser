@@ -42,21 +42,28 @@ interface Result {
   ],
   template: `
     <div class="finder-container" id="finder">
-      <!-- Inicio -->
+      <!-- Start Screen -->
       <div *ngIf="!started" class="start-screen" [@fadeInOut]>
         <h1>Encuentra tu Solución Solar Ideal</h1>
         <p>Responde algunas preguntas simples para ayudarte a encontrar la mejor solución para tus necesidades.</p>
         <button class="primary-button" (click)="startQuiz()">
-          Comenzar <i class="fas fa-arrow-right"></i>
+          Comenzar <i class="fas fa-solar-panel"></i>
         </button>
       </div>
 
-      <!-- Preguntas -->
+      <!-- Questions Screen -->
       <div *ngIf="started && !finished" class="question-screen" [@fadeInOut]>
-        <div class="progress-bar">
-          <div class="progress" [style.width]="progressWidth"></div>
+        <!-- Progress Bar -->
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress" [style.width]="progressWidth">
+              <div class="progress-glow"></div>
+            </div>
+          </div>
+          <span class="progress-text">Pregunta {{ currentQuestionIndex + 1 }} de {{ questions.length }}</span>
         </div>
         
+        <!-- Question Content -->
         <div class="question-content">
           <h2>{{ currentQuestion.text }}</h2>
           <div class="options-grid">
@@ -66,11 +73,15 @@ interface Result {
               (click)="selectOption(option)"
               [class.selected]="selectedOption === option"
             >
-              {{ option.text }}
+              <div class="option-content">
+                {{ option.text }}
+                <i *ngIf="selectedOption === option" class="fas fa-check-circle"></i>
+              </div>
             </button>
           </div>
         </div>
 
+        <!-- Navigation -->
         <div class="navigation-buttons">
           <button 
             *ngIf="currentQuestionIndex > 0"
@@ -90,246 +101,561 @@ interface Result {
         </div>
       </div>
 
-      <!-- Resultados -->
+      <!-- Results Screen -->
       <div *ngIf="finished" class="result-screen" [@fadeInOut]>
-        <h2>Tu Solución Recomendada</h2>
-        <div class="result-card">
-          <img [src]="recommendedSolution.imageUrl" [alt]="recommendedSolution.title">
-          <h3>{{ recommendedSolution.title }}</h3>
-          <p>{{ recommendedSolution.description }}</p>
-          
-          <div class="benefits-section">
-            <h4>Beneficios principales:</h4>
-            <ul>
-              <li *ngFor="let benefit of recommendedSolution.benefits">
-                <i class="fas fa-check"></i> {{ benefit }}
-              </li>
-            </ul>
-          </div>
+        <div class="result-header">
+          <h2>Tu Solución Recomendada</h2>
         </div>
 
-        <div class="action-buttons">
-          <button class="secondary-button" (click)="restartQuiz()">
-            <i class="fas fa-redo"></i> Comenzar de nuevo
-          </button>
-          <button class="primary-button" (click)="scrollToContacto()">
-    <i class="fas fa-envelope"></i> Contactar ventas
-  </button>
+        <div class="result-card">
+          <div class="result-image-container">
+            <img [src]="recommendedSolution.imageUrl" [alt]="recommendedSolution.title">
+          </div>
+
+          <div class="result-content">
+            <h3>{{ recommendedSolution.title }}</h3>
+            <p class="result-description">{{ recommendedSolution.description }}</p>
+            
+            <div class="benefits-section">
+              <h4>Beneficios principales:</h4>
+              <ul>
+                <li *ngFor="let benefit of recommendedSolution.benefits">
+                  <i class="fas fa-check"></i>
+                  <span>{{ benefit }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="secondary-button" (click)="restartQuiz()">
+              <i class="fas fa-redo"></i> Comenzar de nuevo
+            </button>
+            <button class="primary-button" (click)="scrollToContacto()">
+              <i class="fas fa-envelope"></i> Contactar ventas
+            </button>
+          </div>
         </div>
       </div>
     </div>
   `,
   styles: [`
     .finder-container {
-     width: 100%;
-     min-height: 100vh;
-     padding: 4rem 2rem;
-     display: flex;
-     flex-direction: column;
-     justify-content: center;
-     background-color: #f8fafc;
-   }
+      width: 100%;
+      min-height: 90vh; /* Reduced from 100vh */
+      padding: 2rem; /* Reduced from 4rem */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: linear-gradient(45deg, rgba(12, 69, 122, 0.95), rgba(26, 110, 184, 0.95)),
+                  url('/about.jpg') center center;
+      background-attachment: fixed;
+      background-size: cover;
+      position: relative;
+      overflow: hidden;
+    }
 
-   .start-screen {
-     text-align: center;
-     max-width: 800px;
-     margin: 0 auto;
-     padding: 4rem 2rem;
-     background: white;
-     border-radius: 1rem;
-     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-   }
+    /* Animated background effect */
+    .finder-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+      animation: shine 15s linear infinite;
+    }
 
-   .start-screen h1 {
-     font-size: clamp(2rem, 5vw, 3.5rem);
-     font-weight: 800;
-     background: linear-gradient(90deg, #2563eb, #3b82f6);
-     -webkit-background-clip: text;
-     -webkit-text-fill-color: transparent;
-     margin-bottom: 2rem;
-   }
+    @keyframes shine {
+      0% { transform: translateY(-50%) rotate(0deg); }
+      100% { transform: translateY(-50%) rotate(360deg); }
+    }
 
-   .question-screen {
-     width: 100%;
-     max-width: 1200px;
-     margin: 0 auto;
-     padding: 3rem;
-     background: white;
-     border-radius: 1rem;
-     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-   }
+    .start-screen {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                  0 0 0 1px rgba(255, 255, 255, 0.1);
+      transform: translateY(0);
+      transition: transform 0.3s ease;
+    }
 
-   .progress-bar {
-     width: 100%;
-     height: 12px;
-     background-color: #e2e8f0;
-     border-radius: 1rem;
-     margin-bottom: 3rem;
-   }
+    .start-screen:hover {
+      transform: translateY(-5px);
+    }
 
-   .progress {
-     height: 100%;
-     background: linear-gradient(90deg, #2563eb, #3b82f6);
-     border-radius: 1rem;
-     transition: width 0.4s ease;
-   }
+    .start-screen h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #0c457a 0%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      animation: gradientFlow 5s ease infinite;
+    }
 
-   .question-content h2 {
-     font-size: clamp(1.5rem, 3vw, 2rem);
-     color: #1e293b;
-     font-weight: 700;
-     margin-bottom: 2rem;
-   }
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-   .options-grid {
-     display: grid;
-     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-     gap: 1.5rem;
-     margin-bottom: 3rem;
-   }
+    .option-button {
+      padding: 2rem;
+      border: 2px solid rgba(12, 69, 122, 0.1);
+      border-radius: 1.5rem;
+      background: white;
+      font-size: 1.1rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: left;
+      line-height: 1.6;
+      position: relative;
+      overflow: hidden;
+    }
 
-   .option-button {
-     padding: 2rem;
-     border: 2px solid #e2e8f0;
-     border-radius: 1rem;
-     background: white;
-     font-size: 1.1rem;
-     transition: all 0.3s ease;
-     text-align: left;
-     line-height: 1.6;
-   }
+    .secondary-button {
+      background: rgba(255, 255, 255, 0.9);
+      color: #0c457a;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      font-weight: 600;
+      border: 2px solid #0c457a;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
 
-   .option-button:hover {
-     border-color: #2563eb;
-     transform: translateY(-2px);
-     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-   }
+    .secondary-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(12, 69, 122, 0.1);
+      transition: left 0.3s ease;
+    }
 
-   .option-button.selected {
-     border-color: #2563eb;
-     background-color: #eff6ff;
-   }
+    .secondary-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px -5px rgba(12, 69, 122, 0.2);
+      background: #f8fafc;
+    }
 
-   .result-screen {
-     max-width: 1200px;
-     margin: 0 auto;
-     padding: 4rem 2rem;
-   }
+    .secondary-button:hover::before {
+      left: 100%;
+    }
+    .option-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(12, 69, 122, 0.05),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
 
-   .result-screen h2 {
-     font-size: clamp(2rem, 4vw, 3rem);
-     text-align: center;
-     margin-bottom: 3rem;
-     color: #1e293b;
-   }
+    .option-button:hover {
+      border-color: #0c457a;
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 20px 30px -10px rgba(12, 69, 122, 0.3);
+    }
 
-   .result-card {
-     background: white;
-     border-radius: 1rem;
-     padding: 3rem;
-     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-   }
+    .option-button:hover::before {
+      left: 100%;
+    }
 
-   .result-card img {
-     width: 100%;
-     max-height: 400px;
-     object-fit: cover;
-     border-radius: 0.5rem;
-     margin-bottom: 2rem;
-   }
+    .option-button.selected {
+      border-color: #0c457a;
+      background:rgb(127, 203, 200);
+      box-shadow: 0 20px 30px -10px rgba(12, 69, 122, 0.2);
+    }
 
-   .result-card h3 {
-     font-size: 2rem;
-     color: #1e293b;
-     margin-bottom: 1rem;
-   }
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 1rem;
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
 
-   .result-card p {
-     color: #475569;
-     font-size: 1.1rem;
-     line-height: 1.8;
-     margin-bottom: 2rem;
-   }
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #0c457a, #2563eb);
+      border-radius: 1rem;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
 
-   .benefits-section h4 {
-     font-size: 1.5rem;
-     color: #1e293b;
-     margin-bottom: 1.5rem;
-   }
+    .progress::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -200%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+      );
+      animation: shine 2s linear infinite;
+    }
 
-   .benefits-section li {
-     font-size: 1.1rem;
-     padding: 1rem;
-     margin-bottom: 0.5rem;
-     background: #f8fafc;
-     border-radius: 0.5rem;
-     transition: transform 0.3s ease;
-   }
+    .result-card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 3rem;
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      transform: translateY(0);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
 
-   .benefits-section li:hover {
-     transform: translateX(10px);
-   }
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #0c457a, #2563eb);
+    }
 
-   .benefits-section i {
-     color: #2563eb;
-   }
+    .result-card img {
+      transform: scale(1);
+      transition: transform 0.5s ease;
+      border-radius: 1rem;
+      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2);
+    }
 
-   .action-buttons {
-     display: flex;
-     gap: 1rem;
-     margin-top: 3rem;
-   }
+    .result-card:hover img {
+      transform: scale(1.02);
+    }
 
-   .primary-button,
-   .secondary-button {
-     flex: 1;
-     padding: 1rem 2rem;
-     font-size: 1.1rem;
-     font-weight: 600;
-     border-radius: 0.5rem;
-     transition: all 0.3s ease;
-   }
+    .benefits-section li {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transform: translateX(0);
+      transition: all 0.3s ease;
+      border-left: 4px solid #0c457a;
+    }
 
-   .primary-button {
-     background: #2563eb;
-     color: white;
-     border: none;
-   }
+    .benefits-section li:hover {
+      transform: translateX(10px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
 
-   .primary-button:hover {
-     background: #1d4ed8;
-     transform: translateY(-2px);
-   }
+    .primary-button {
+      background: linear-gradient(135deg, #0c457a, #2563eb);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
 
-   .secondary-button {
-     background: #f8fafc;
-     color: #475569;
-     border: 2px solid #e2e8f0;
-   }
+    .primary-button::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+      transform: rotate(45deg);
+      transition: all 0.3s ease;
+      opacity: 0;
+    }
 
-   .secondary-button:hover {
-     background: #f1f5f9;
-     transform: translateY(-2px);
-   }
+    .primary-button:hover::before {
+      opacity: 1;
+      transform: rotate(45deg) translateY(-50%);
+    }
 
-   @media (max-width: 768px) {
-     .finder-container {
-       padding: 2rem 1rem;
-     }
+    .primary-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 30px -10px rgba(12, 69, 122, 0.4);
+    }
 
-     .question-screen {
-       padding: 2rem 1rem;
-     }
+    @media (max-width: 768px) {
+      .finder-container {
+        padding: 2rem 1rem;
+      }
 
-     .option-button {
-       padding: 1.5rem;
-     }
+      .start-screen,
+      .result-card {
+        padding: 2rem;
+      }
 
-     .action-buttons {
-       flex-direction: column;
-     }
-   }
+      .option-button {
+        padding: 1.5rem;
+      }
+    }
+    .progress-container {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
 
+    .progress-text {
+      color: white;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: block;
+    }
+
+    .progress-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: progressGlow 2s linear infinite;
+    }
+
+    @keyframes progressGlow {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .question-screen {
+      color: white;
+    }
+
+    .question-content h2 {
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .option-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .option-button i {
+      color: #0c457a;
+      font-size: 1.2rem;
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.3s ease;
+    }
+
+    .option-button.selected i {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .result-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 2rem;
+    }
+
+    .result-image-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      margin: -3rem -3rem 2rem -3rem;
+      height: 250px; /* Reduced from 300px */
+    }
+
+    .result-image-container img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+
+    .result-content {
+      margin-bottom: 2rem;
+    }
+
+    .result-description {
+      color: #4a5568;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 1rem 0 2rem 0;
+    }
+
+    .result-card .benefits-section {
+      margin-top: 2rem;
+      padding: 2rem;
+    }
+
+    .benefits-section li {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .benefits-section li i {
+      background: #0c457a;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .action-buttons button {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .result-image-container {
+        margin: -2rem -2rem 1.5rem -2rem;
+      }
+
+      .result-image-container img {
+        height: 200px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+    .result-screen {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .result-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+
+    .result-header h2 {
+      font-size: 2rem;
+      margin: 0;
+    }
+
+    .result-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 1rem;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .result-image-container {
+      position: relative;
+      height: 200px;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .result-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .result-content {
+      padding: 1.5rem;
+    }
+
+    .result-content h3 {
+      font-size: 1.5rem;
+      color: #0c457a;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .result-description {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #4a5568;
+      margin-bottom: 1rem;
+    }
+
+    .benefits-section h4 {
+      font-size: 1.1rem;
+      color: #0c457a;
+      margin: 0 0 0.75rem 0;
+    }
+
+    .benefits-section ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .benefits-section li {
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(12, 69, 122, 0.05);
+      border-radius: 0.5rem;
+      border-left: 3px solid #0c457a;
+    }
+    @media (max-width: 768px) {
+      .result-screen {
+        padding: 0.5rem;
+      }
+
+      .result-image-container {
+        height: 150px;
+      }
+
+      .result-content {
+        padding: 1rem;
+      }
+
+      .action-buttons {
+        padding: 1rem;
+        flex-direction: column;
+      }
+
+      .benefits-section li {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
   `]
 })
 export class SolutionFinderComponent {
@@ -339,19 +665,19 @@ export class SolutionFinderComponent {
       text: '¿Cuál es tu principal objetivo al considerar energía solar?',
       options: [
         {
-          text: 'Independencia total de la red eléctrica',
+          text: 'Independencia total de la red eléctrica ',
           weights: { offGrid: 10, onGrid: 0, bombeo: 0 }
         },
         {
-          text: 'Reducir el costo de la factura de luz',
+          text: 'Reducir el costo de la factura de luz ',
           weights: { offGrid: 0, onGrid: 10, bombeo: 0 }
         },
         {
-          text: 'Bombear agua en una zona sin electricidad',
+          text: 'Bombear agua en una zona sin electricidad ',
           weights: { offGrid: 0, onGrid: 0, bombeo: 10 }
         },
         {
-          text: 'Contribuir al medio ambiente',
+          text: 'Contribuir al medio ambiente ',
           weights: { offGrid: 5, onGrid: 5, bombeo: 5 }
         }
       ]
@@ -361,15 +687,15 @@ export class SolutionFinderComponent {
       text: '¿Tienes acceso a la red eléctrica en tu ubicación?',
       options: [
         {
-          text: 'Sí, tengo conexión confiable',
+          text: 'Sí, tengo conexión confiable ',
           weights: { offGrid: 0, onGrid: 10, bombeo: 5 }
         },
         {
-          text: 'Sí, pero el servicio es inestable',
+          text: 'Sí, pero el servicio es inestable ',
           weights: { offGrid: 8, onGrid: 5, bombeo: 5 }
         },
         {
-          text: 'No, es una zona sin acceso a la red',
+          text: 'No, es una zona sin acceso a la red ',
           weights: { offGrid: 10, onGrid: 0, bombeo: 10 }
         }
       ]
@@ -379,15 +705,15 @@ export class SolutionFinderComponent {
       text: '¿Cuál es tu presupuesto aproximado para la inversión?',
       options: [
         {
-          text: 'Menos de $5,000 USD',
+          text: 'Menos de $5,000 USD ',
           weights: { offGrid: 0, onGrid: 5, bombeo: 8 }
         },
         {
-          text: 'Entre $5,000 y $15,000 USD',
+          text: 'Entre $5,000 y $15,000 USD ',
           weights: { offGrid: 5, onGrid: 10, bombeo: 5 }
         },
         {
-          text: 'Más de $15,000 USD',
+          text: 'Más de $15,000 USD ',
           weights: { offGrid: 10, onGrid: 5, bombeo: 0 }
         }
       ]
@@ -397,15 +723,15 @@ export class SolutionFinderComponent {
       text: '¿Cuál es el uso principal que le darás a la energía?',
       options: [
         {
-          text: 'Uso residencial (iluminación, electrodomésticos)',
+          text: 'Uso residencial (iluminación, electrodomésticos) ',
           weights: { offGrid: 5, onGrid: 10, bombeo: 0 }
         },
         {
-          text: 'Bombeo de agua para riego o consumo',
+          text: 'Bombeo de agua para riego o consumo ',
           weights: { offGrid: 0, onGrid: 0, bombeo: 10 }
         },
         {
-          text: 'Uso comercial o industrial',
+          text: 'Uso comercial o industrial ',
           weights: { offGrid: 8, onGrid: 5, bombeo: 0 }
         }
       ]

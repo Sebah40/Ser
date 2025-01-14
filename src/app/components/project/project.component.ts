@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 interface BlogPost {
   id: number;
@@ -102,7 +103,7 @@ interface BlogPost {
 
         <!-- Project Content -->
         <div class="content-section">
-          <div [innerHTML]="project.content"></div>
+        <div [innerHTML]="sanitizedContent" class="rich-text-content"></div>
 
           <!-- Content Images Gallery -->
           <div *ngIf="project.contentImages?.length" class="image-gallery">
@@ -157,6 +158,17 @@ interface BlogPost {
     /* Navigation */
     .nav-bar {
       margin-bottom: 3rem;
+    }
+
+    .content-section :deep(.text-left) {
+      text-align: left;
+    }
+    .content-section :deep(.text-center) {
+      text-align: center;
+    }
+
+    .content-section :deep(.text-right) {
+      text-align: right;
     }
 
     .nav-button {
@@ -439,21 +451,43 @@ interface BlogPost {
       color: var(--gray-700);
       line-height: 1.8;
     }
+    .content-section :deep(h1) {
+      font-size: 2.25rem;
+      color: var(--gray-800);
+      margin: 2.5rem 0 1.5rem;
+      line-height: 1.2;
+    }
 
     .content-section :deep(h2) {
       font-size: 1.875rem;
       color: var(--gray-800);
       margin: 2rem 0 1rem;
+      line-height: 1.3;
     }
-
+    .content-section :deep(h3) {
+      font-size: 1.5rem;
+      color: var(--gray-800);
+      margin: 1.75rem 0 1rem;
+      line-height: 1.4;
+    }
+    .content-section :deep(h4) {
+      font-size: 1.25rem;
+      color: var(--gray-800);
+      margin: 1.5rem 0 1rem;
+      line-height: 1.4;
+    }
     .content-section :deep(p) {
       margin-bottom: 1.5rem;
+      font-size: 1.125rem;
     }
 
     .content-section :deep(img) {
       max-width: 100%;
+      height: auto;
       border-radius: var(--radius-md);
-      margin: 2rem 0;
+      margin: 2rem auto;
+      display: block;
+      box-shadow: var(--shadow-md);
     }
 
     .content-section :deep(ul), 
@@ -487,6 +521,207 @@ interface BlogPost {
         padding: 1.5rem;
       }
     }
+    .content-section :deep(ul),
+    .content-section :deep(ol) {
+      margin: 1.5rem 0;
+      padding-left: 1.5rem;
+    }
+
+    .content-section :deep(ul) {
+      list-style-type: disc;
+    }
+
+    .content-section :deep(ol) {
+      list-style-type: decimal;
+    }
+
+    .content-section :deep(li) {
+      margin-bottom: 0.75rem;
+      font-size: 1.125rem;
+    }
+
+    /* Font size variations */
+    .content-section :deep(.text-sm) {
+      font-size: 0.875rem;
+    }
+
+    .content-section :deep(.text-base) {
+      font-size: 1rem;
+    }
+
+    .content-section :deep(.text-lg) {
+      font-size: 1.125rem;
+    }
+
+    .content-section :deep(.text-xl) {
+      font-size: 1.25rem;
+    }
+
+    .content-section :deep(.text-2xl) {
+      font-size: 1.5rem;
+    }
+
+    /* Blockquotes */
+    .content-section :deep(blockquote) {
+      border-left: 4px solid var(--primary);
+      padding: 1rem 0 1rem 2rem;
+      margin: 2rem 0;
+      font-style: italic;
+      color: var(--gray-600);
+      background: var(--gray-50);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    /* Code blocks */
+    .content-section :deep(pre) {
+      background: var(--gray-800);
+      color: var(--gray-100);
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      margin: 2rem 0;
+    }
+
+    .content-section :deep(code) {
+      font-family: monospace;
+      background: var(--gray-100);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    /* Tables */
+    .content-section :deep(table) {
+      width: 100%;
+      margin: 2rem 0;
+      border-collapse: collapse;
+    }
+
+    .content-section :deep(th),
+    .content-section :deep(td) {
+      padding: 0.75rem;
+      border: 1px solid var(--gray-200);
+      text-align: left;
+    }
+
+    .content-section :deep(th) {
+      background: var(--gray-50);
+      font-weight: 600;
+    }
+
+    .content-section :deep(tr:nth-child(even)) {
+      background: var(--gray-50);
+    }
+
+    /* Links */
+    .content-section :deep(a) {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .content-section :deep(a:hover) {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .content-section :deep(h1) { font-size: 2rem; }
+      .content-section :deep(h2) { font-size: 1.75rem; }
+      .content-section :deep(h3) { font-size: 1.5rem; }
+      .content-section :deep(h4) { font-size: 1.25rem; }
+      .content-section :deep(p),
+      .content-section :deep(li) {
+        font-size: 1rem;
+      }
+
+      .content-section :deep(blockquote) {
+        padding: 1rem;
+        margin: 1.5rem 0;
+      }
+
+      .content-section :deep(table) {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
+    /* Image size control in content */
+    .content-section :deep(img) {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius-md);
+      margin: 2rem auto;
+      display: block;
+      box-shadow: var(--shadow-md);
+      /* Add max dimensions */
+      max-height: 600px;
+      object-fit: contain;
+    }
+
+    /* Container for images to maintain aspect ratio */
+    .content-section :deep(figure) {
+      margin: 2rem auto;
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Image alignment classes */
+    .content-section :deep(.align-left) {
+      float: left;
+      margin-right: 2rem;
+      margin-bottom: 1rem;
+      max-width: 400px;
+    }
+
+    .content-section :deep(.align-right) {
+      float: right;
+      margin-left: 2rem;
+      margin-bottom: 1rem;
+      max-width: 400px;
+    }
+
+    .content-section :deep(.align-center) {
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 800px;
+    }
+
+    /* Image size classes */
+    .content-section :deep(.img-small) {
+      max-width: 300px;
+    }
+
+    .content-section :deep(.img-medium) {
+      max-width: 500px;
+    }
+
+    .content-section :deep(.img-large) {
+      max-width: 800px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .content-section :deep(img) {
+        max-height: 400px;
+      }
+
+      .content-section :deep(.align-left),
+      .content-section :deep(.align-right) {
+        float: none;
+        margin: 2rem auto;
+        max-width: 100%;
+      }
+
+      .content-section :deep(.img-small),
+      .content-section :deep(.img-medium),
+      .content-section :deep(.img-large) {
+        max-width: 100%;
+      }
+    }
   `]
 })
 export class ProjectComponent implements OnInit {
@@ -499,11 +734,13 @@ export class ProjectComponent implements OnInit {
   authCode: string = '';
   postToDeleteId: number | null = null;
   selectedImage: string | null = null;
+  sanitizedContent: SafeHtml = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private blogService: BlogService
+    private blogService: BlogService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -528,6 +765,8 @@ export class ProjectComponent implements OnInit {
         const foundProject = posts.find(post => post.id === targetId);
         if (foundProject) {
           this.project = foundProject;
+          // Safely sanitize the HTML content
+          this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(foundProject.content);
           this.loading = false;
         } else {
           this.error = 'Proyecto no encontrado';
