@@ -4,11 +4,8 @@ import { HeroComponent } from '../hero/hero.component';
 import { AboutComponent } from '../about/about.component';
 import { CommonModule } from '@angular/common';
 import { SolutionsComponent } from '../soluciones/soluciones.component';
-import { ClientesComponent } from '../clientes/clientes.component';
 import { ContactoComponent } from '../contacto/contacto.component';
-import { SolutionFinderComponent } from "../solution-finder/solution-finder.component";
-import { MapsComponent } from '../maps/maps.component';
-
+import { SolutionFinderComponent } from '../solution-finder/solution-finder.component';
 @Component({
   selector: 'app-section-container',
   standalone: true,
@@ -18,10 +15,8 @@ import { MapsComponent } from '../maps/maps.component';
     NavbarComponent,
     HeroComponent,
     AboutComponent,
-    ClientesComponent,
     ContactoComponent,
     SolutionFinderComponent,
-    MapsComponent
 ],
   template: `
     <div class="snap-container">
@@ -37,13 +32,7 @@ import { MapsComponent } from '../maps/maps.component';
       </section>
       <section class="snap-nosection">
         <app-solution-finder></app-solution-finder>
-      </section>
-      <!-- <section class="snap-section">
-        <app-clientes></app-clientes>
-      </section> -->
-      <section>
-        <app-maps></app-maps>
-      </section>
+    </section>
       <section class="snap-asection">
         <app-contacto></app-contacto>
       </section>

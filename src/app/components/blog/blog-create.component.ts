@@ -16,13 +16,6 @@ import { Router } from '@angular/router';
           <p class="subtitle">Completa los detalles del post y el código de autenticación</p>
           <form [formGroup]="blogForm" (ngSubmit)="createPost()">
             <!-- Previous form fields remain the same until the editor -->
-            <section class="blog-create-section">
-      <div class="blog-form-container">
-        <div class="form-card">
-          <h2>Crear Nuevo Post</h2>
-          <p class="subtitle">Completa los detalles del post y el código de autenticación</p>
-          <form [formGroup]="blogForm" (ngSubmit)="createPost()">
-            <!-- Auth Code Field -->
             <div class="form-group">
               <input 
                 type="text" 
