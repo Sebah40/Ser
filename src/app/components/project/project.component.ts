@@ -173,10 +173,6 @@ interface BlogPost {
                 <i class="fas fa-envelope"></i>
                 Contactar
               </a>
-              <a href="/calculator" class="cta-button secondary">
-                <i class="fas fa-calculator"></i>
-                Calcular Presupuesto
-              </a>
             </div>
           </div>
         </div>
