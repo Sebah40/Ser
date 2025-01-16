@@ -287,8 +287,6 @@ import {
       color: var(--text-light);
       margin-bottom: 1.5rem;
       line-height: 1.6;
-      opacity: 0;
-      transform: translateY(10px);
       transition: opacity var(--transition), transform var(--transition);
     }
 
@@ -515,12 +513,17 @@ import {
       .solution-card:hover {
         transform: none;
       }
+      
 
       .card-description,
       .card-actions {
         opacity: 1;
         transform: none;
       }
+
+      .card-overlay {
+    opacity: 1; /* Always show overlay on touch devices */
+  }
 
       .theme-toggle:hover {
         transform: none;

@@ -53,7 +53,6 @@ interface BlogPost {
                 {{ project.category === 'project' ? 'Proyecto Destacado' : 'Artículo Técnico' }}
               </span>
               <span class="date">
-                <i class="far fa-calendar"></i>
                 {{ project.date | date:'dd MMMM, yyyy':'':'es' }}
               </span>
             </div>
@@ -169,7 +168,7 @@ interface BlogPost {
             <h3>¿Interesado en un proyecto similar?</h3>
             <p>Contáctanos para discutir tus necesidades específicas</p>
             <div class="cta-buttons">
-              <a href="/contact" class="cta-button primary">
+              <a href="#contacto" class="cta-button primary">
                 <i class="fas fa-envelope"></i>
                 Contactar
               </a>
@@ -178,12 +177,6 @@ interface BlogPost {
         </div>
 
         <!-- Related Projects Section -->
-        <div class="related-section">
-          <h2>Proyectos Relacionados</h2>
-          <div class="related-grid">
-            <!-- Add your related projects here -->
-          </div>
-        </div>
       </div>
 
       <!-- Image Modal -->

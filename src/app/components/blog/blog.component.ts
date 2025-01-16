@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
+import { NavbarComponent } from "../navbar/navbar.component";
+import { ContactoComponent } from "../contacto/contacto.component";
 
 interface BlogPost {
   id: number;
@@ -22,8 +24,9 @@ interface BlogPost {
 @Component({
   selector: 'app-blog',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, NavbarComponent],
   template: `
+  <app-navbar></app-navbar>
     <section class="blog-section">
       <!-- Navigation -->
       <nav class="nav-bar">
@@ -41,12 +44,12 @@ interface BlogPost {
           </button>
         </div>
       </nav>
-
       <!-- Header -->
       <header class="header">
         <h1>Nuestros Proyectos</h1>
         <p>Descubre nuestras obras más recientes e innovadoras</p>
       </header>
+      
 
       <!-- Filters -->
       <div class="filters">
@@ -154,21 +157,7 @@ interface BlogPost {
             <button (click)="closeDeleteModal()" class="cancel-button">Cancelar</button>
           </div>
         </div>
-      </div>
-      <div class="contact-details">
-              <div class="contact-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <p>Las Heras 331 Primer Piso, Concordia</p>
-              </div>
-              <a
-                href="https://wa.me/message/6OHMJMTGTRMWP1/?text=hola%2C%20quer%C3%ADa%20consultar%20sobre%3A%20"
-                target="_blank"
-                class="whatsapp-button"
-              >
-                <i class="fab fa-whatsapp"></i>
-                <span>¿Tienes algún plan?</span>
-              </a>
-            </div>          
+      </div>      
     </section>
   `,
   styles: [`
@@ -268,58 +257,6 @@ interface BlogPost {
      gap: 0.75rem;
      justify-content: center;
      flex-wrap: wrap;
-}
-
-.whatsapp-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color:rgb(29, 143, 76);
-  border-radius: 50px; /* More rounded corners like in the image */
-  padding: 12px 24px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-.whatsapp-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-  background-color:rgb(41, 153, 116);
-}
-
-.whatsapp-button svg {
-  fill: white;
-  width: 24px;
-  height: 24px;
-}
-
-.whatsapp-button span {
-  color: white;
-  font-weight: 500;
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-@media (max-width: 768px) {
-  .whatsapp-button {
-    padding: 10px 20px;
-  }
-  
-  .whatsapp-button span {
-    font-size: 14px;
-  }
-  
-  .whatsapp-button svg {
-    width: 20px;
-    height: 20px;
-  }
 }
 
  .tag-button {

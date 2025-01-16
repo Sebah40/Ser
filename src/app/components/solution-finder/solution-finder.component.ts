@@ -1,7 +1,8 @@
 import { Component, ChangeDetectorRef  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
-
+import { FormsModule, NgForm } from '@angular/forms';
+import { ContactService } from '../../services/contact.service';
 interface Question {
   id: number;
   text: string;
@@ -16,6 +17,12 @@ interface Option {
     bombeo: number;
   };
 }
+interface ContactForm {
+  name: string;
+  email: string;
+  phone: string;
+  comments?: string;
+}
 
 interface Result {
   type: 'offGrid' | 'onGrid' | 'bombeo';
@@ -28,7 +35,7 @@ interface Result {
 @Component({
   selector: 'app-solution-finder',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -103,41 +110,106 @@ interface Result {
 
       <!-- Results Screen -->
       <div *ngIf="finished" class="result-screen" [@fadeInOut]>
-        <div class="result-header">
-          <h2>Tu Solución Recomendada</h2>
-        </div>
+  <div class="result-header">
+    <h2>Tu Solución Recomendada</h2>
+  </div>
 
-        <div class="result-card">
-          <div class="result-image-container">
-            <img [src]="recommendedSolution.imageUrl" [alt]="recommendedSolution.title">
-          </div>
+  <div class="result-card">
+    <div class="result-image-container">
+      <img [src]="recommendedSolution.imageUrl" [alt]="recommendedSolution.title">
+    </div>
 
-          <div class="result-content">
-            <h3>{{ recommendedSolution.title }}</h3>
-            <p class="result-description">{{ recommendedSolution.description }}</p>
-            
-            <div class="benefits-section">
-              <h4>Beneficios principales:</h4>
-              <ul>
-                <li *ngFor="let benefit of recommendedSolution.benefits">
-                  <i class="fas fa-check"></i>
-                  <span>{{ benefit }}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="action-buttons">
-            <button class="secondary-button" (click)="restartQuiz()">
-              <i class="fas fa-redo"></i> Comenzar de nuevo
-            </button>
-            <button class="primary-button" (click)="scrollToContacto()">
-              <i class="fas fa-envelope"></i> Contactar ventas
-            </button>
-          </div>
-        </div>
+    <div class="result-content">
+      <h3>{{ recommendedSolution.title }}</h3>
+      <p class="result-description">{{ recommendedSolution.description }}</p>
+      
+      <div class="benefits-section">
+        <h4>Beneficios principales:</h4>
+        <ul>
+          <li *ngFor="let benefit of recommendedSolution.benefits">
+            <i class="fas fa-check"></i>
+            <span>{{ benefit }}</span>
+          </li>
+        </ul>
       </div>
     </div>
+
+    <!-- Contact Form Section -->
+    <div class="contact-section" *ngIf="!showForm">
+      <p class="contact-prompt">¿Te gustaría recibir más información sobre esta solución?</p>
+      <button class="primary-button" (click)="showForm = true">
+        <i class="fas fa-envelope"></i> Recibir Información
+      </button>
+    </div>
+
+    <form *ngIf="showForm" class="contact-form" #form="ngForm">
+      <div class="form-group">
+        <label for="name">Nombre completo *</label>
+        <input 
+          type="text" 
+          id="name"
+          [(ngModel)]="contactForm.name"
+          name="name"
+          required
+          placeholder="Tu nombre"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email">Correo electrónico *</label>
+        <input 
+          type="email" 
+          id="email"
+          [(ngModel)]="contactForm.email"
+          name="email"
+          required
+          placeholder="tu@email.com"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Teléfono *</label>
+        <input 
+          type="tel" 
+          id="phone"
+          [(ngModel)]="contactForm.phone"
+          name="phone"
+          required
+          placeholder="Tu número de teléfono"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="comments">Comentarios adicionales</label>
+        <textarea 
+          id="comments"
+          [(ngModel)]="contactForm.comments"
+          name="comments"
+          rows="3"
+          placeholder="¿Algo más que quieras comentarnos?"
+        ></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="secondary-button" (click)="showForm = false">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button type="submit" class="primary-button" (click)="sendResults(form)" [disabled]="!form.valid">
+          <i class="fas fa-paper-plane"></i> Enviar Información
+        </button>
+      </div>
+    </form>
+
+    <div class="action-buttons" *ngIf="!showForm">
+      <button class="secondary-button" (click)="restartQuiz()">
+        <i class="fas fa-redo"></i> Comenzar de nuevo
+      </button>
+      <button class="primary-button" (click)="scrollToContacto()">
+        <i class="fas fa-envelope"></i> Contactar ventas
+      </button>
+    </div>
+  </div>
+</div>
   `,
   styles: [`
     .finder-container {
@@ -381,6 +453,75 @@ interface Result {
       overflow: hidden;
     }
 
+    .contact-section {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 2rem;
+  background: rgba(12, 69, 122, 0.05);
+  border-radius: 1rem;
+}
+
+.contact-prompt {
+  margin-bottom: 1.5rem;
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+.contact-form {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: var(--surface);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(12, 69, 122, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .contact-form {
+    padding: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}
     .primary-button::before {
       content: '';
       position: absolute;
@@ -659,6 +800,7 @@ interface Result {
   `]
 })
 export class SolutionFinderComponent {
+  userAnswers: { questionId: number, selectedOption: Option }[] = [];
   questions: Question[] = [
     {
       id: 1,
@@ -738,6 +880,14 @@ export class SolutionFinderComponent {
     }
   ];
 
+  contactForm: ContactForm = {
+    name: '',
+    email: '',
+    phone: '',
+    comments: ''
+  };
+  showForm: boolean = false;
+
   results: { [key: string]: Result } = {
     offGrid: {
       type: 'offGrid',
@@ -804,7 +954,7 @@ export class SolutionFinderComponent {
     return `${((this.currentQuestionIndex + 1) / this.questions.length) * 100}%`;
   }
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private contactService: ContactService) {}
 
   startQuiz(): void {
     this.started = true;
@@ -814,12 +964,44 @@ export class SolutionFinderComponent {
 
   selectOption(option: Option): void {
     this.selectedOption = option;
+    // Store the answer in the userAnswers array
+    const currentAnswer = { questionId: this.currentQuestion.id, selectedOption: option };
+    this.userAnswers.push(currentAnswer);
   }
 
   previousQuestion(): void {
     if (this.currentQuestionIndex > 0) {
       this.currentQuestionIndex--;
       this.selectedOption = null;
+    }
+  }
+  
+
+  sendResults(form: NgForm): void {
+    if (form.valid) {
+      const resultData = {
+        solution: this.recommendedSolution,
+        scores: this.scores,
+        contact: this.contactForm,
+        answers: this.userAnswers.map(answer => ({
+          questionId: answer.questionId,      // Include the question ID
+          selectedOption: answer.selectedOption.text // Include the selected option's text
+        }))
+      };
+  
+      this.contactService.sendQuizResults(resultData).subscribe({
+        next: (response) => {
+          if (response.success) {
+            console.log('Email sent successfully');
+            this.showForm = false;
+          } else {
+            console.error('Failed to send email:', response.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error sending email:', error);
+        }
+      });
     }
   }
 
