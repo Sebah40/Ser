@@ -1,11 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
 
 @Component({
   selector: 'app-contacto',
@@ -13,118 +8,116 @@ import {
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <section class="contact-container" id="contacto">
-      <div class="overlay">
-        <div class="contact-content">
-          <!-- Contact Info Side -->
-          <div class="contact-info">
-            <h2>¿Hablamos?</h2>
-            <p class="subtitle">
-              Estamos aquí para ayudarte con tus proyectos de energía solar
-            </p>
+  <div class="overlay">
+    <div class="contact-content">
+      <!-- Contact Info Side -->
+      <div class="contact-info">
+        <h2>¿Hablamos?</h2>
+        <p class="subtitle">
+          Estamos aquí para ayudarte con tus proyectos de energía solar
+        </p>
 
-            <div class="contact-details">
-              <div class="contact-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <p>Las Heras 331 Primer Piso, Concordia</p>
-              </div>
-              <a
-                href="https://wa.me/message/6OHMJMTGTRMWP1/?text=hola%2C%20quer%C3%ADa%20consultar%20sobre%3A%20"
-                target="_blank"
-                class="whatsapp-button"
-              >
-                <i class="fab fa-whatsapp"></i>
-                <span>¿Tienes algún plan?</span>
-              </a>
+        <div class="contact-details">
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <p>Las Heras 331 Primer Piso, Concordia</p>
+          </div>
+          
+          <a
+            href="https://wa.me/message/6OHMJMTGTRMWP1/?text=hola%2C%20quer%C3%ADa%20consultar%20sobre%3A%20"
+            target="_blank"
+            class="whatsapp-button"
+          >
+            <i class="fab fa-whatsapp"></i>
+            <span>¿Tienes algún plan?</span>
+          </a>
+          <div class="find-solution-container">
+            <a href="#finder" class="find-solution-button">Encuentra tu solución</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form Side -->
+      <div class="contact-form">
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" action="https://formspree.io/f/xkggpdgb" method="POST">
+          <div class="form-row">
+            <div class="form-group">
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="Nombre completo *"
+                [class.invalid]="isFieldInvalid('name')"
+              />
+              <small class="error-message" *ngIf="isFieldInvalid('name')">
+                Nombre requerido
+              </small>
+            </div>
+
+            <div class="form-group">
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="Email *"
+                [class.invalid]="isFieldInvalid('email')"
+              />
+              <small class="error-message" *ngIf="isFieldInvalid('email')">
+                Email válido requerido
+              </small>
             </div>
           </div>
 
-          <!-- Contact Form Side -->
-          <div class="contact-form">
-            <form action="https://formspree.io/f/xkggpdgb" method="POST">
-              <div class="form-row">
-                <div class="form-group">
-                  <input
-                    type="text"
-                    formControlName="name"
-                    name="name"
-                    placeholder="Nombre completo *"
-                    [class.invalid]="isFieldInvalid('name')"
-                  />
-                  <small class="error-message" *ngIf="isFieldInvalid('name')">
-                    Nombre requerido
-                  </small>
-                </div>
+          <div class="form-row">
+            <div class="form-group">
+              <input
+                type="tel"
+                formControlName="phone"
+                placeholder="Teléfono"
+              />
+            </div>
 
-                <div class="form-group">
-                  <input
-                    type="email"
-                    formControlName="email"
-                    name="email"
-                    placeholder="Email *"
-                    [class.invalid]="isFieldInvalid('email')"
-                  />
-                  <small class="error-message" *ngIf="isFieldInvalid('email')">
-                    Email válido requerido
-                  </small>
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <input
-                    type="tel"
-                    formControlName="phone"
-                    name="phone"
-                    placeholder="Teléfono"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <select formControlName="subject" name="subject">
-                    <option value="" disabled selected>
-                      Motivo de contacto *
-                    </option>
-                    <option value="info">Información general</option>
-                    <option value="quote">Solicitar presupuesto</option>
-                    <option value="support">Soporte técnico</option>
-                    <option value="other">Otro</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <textarea
-                  formControlName="message"
-                  name="message"
-                  placeholder="Tu mensaje *"
-                  rows="4"
-                  [class.invalid]="isFieldInvalid('message')"
-                ></textarea>
-                <small class="error-message" *ngIf="isFieldInvalid('message')">
-                  Mensaje requerido
-                </small>
-              </div>
-
-              <button type="submit" [class.submitting]="isSubmitting">
-                <span>{{
-                  isSubmitting ? 'Enviando...' : 'Enviar mensaje'
-                }}</span>
-              </button>
-            </form>
+            <div class="form-group">
+              <select formControlName="subject">
+                <option value="" disabled selected>
+                  Motivo de contacto *
+                </option>
+                <option value="info">Información general</option>
+                <option value="quote">Solicitar presupuesto</option>
+                <option value="support">Soporte técnico</option>
+                <option value="other">Otro</option>
+              </select>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Success Modal -->
-      <div class="modal" *ngIf="showSuccessModal" (click)="closeModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-          <div class="success-icon">✓</div>
-          <h3>¡Mensaje enviado!</h3>
-          <p>Nos pondremos en contacto contigo pronto.</p>
-          <button class="modal-button" (click)="closeModal()">Aceptar</button>
-        </div>
+          <div class="form-group">
+            <textarea
+              formControlName="message"
+              placeholder="Tu mensaje *"
+              rows="4"
+              [class.invalid]="isFieldInvalid('message')"
+            ></textarea>
+            <small class="error-message" *ngIf="isFieldInvalid('message')">
+              Mensaje requerido
+            </small>
+          </div>
+
+          <button type="submit" [disabled]="contactForm.invalid || isSubmitting" [class.submitting]="isSubmitting">
+            <span>{{ isSubmitting ? 'Enviando...' : 'Enviar mensaje' }}</span>
+          </button>
+        </form>
       </div>
-    </section>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal" *ngIf="showSuccessModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="success-icon">✓</div>
+      <h3>¡Mensaje enviado!</h3>
+      <p>Nos pondremos en contacto contigo pronto.</p>
+      <button class="modal-button" (click)="closeModal()">Aceptar</button>
+    </div>
+  </div>
+</section>
   `,
   styles: [
     `
@@ -242,6 +235,38 @@ import {
         transition: all 0.3s ease;
         background: #f8fafc;
       }
+      .find-solution-button {
+  display: inline-block;
+  background-color: #0c457a;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Button hover effect */
+.find-solution-button:hover {
+  background-color: #0d5499;
+  transform: translateY(-3px);
+}
+
+/* Button focus effect */
+.find-solution-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(12, 69, 122, 0.3);
+}
+
+/* Button for mobile responsiveness */
+@media (max-width: 768px) {
+  .find-solution-button {
+    padding: 0.8rem 1.6rem;
+    font-size: 1rem;
+  }
+}
 
       input:focus,
       select:focus,

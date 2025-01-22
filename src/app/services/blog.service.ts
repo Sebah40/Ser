@@ -12,6 +12,7 @@ export interface BlogPost {
   category: 'project' | 'article';
   date: string;
   tags: string[];
+  author: string;  // Add this line
   powerOutput?: string;
   panelsInstalled?: number;
   costSavings?: string;
@@ -35,5 +36,8 @@ export class BlogService {
   deletePost(postId: number, authCode: string): Observable<void> {
     const headers = new HttpHeaders().set('authCode', authCode); // Send authCode in the request header
     return this.http.delete<void>(`${this.apiUrl}/${postId}`, { headers });
+  }
+  updatePost(post: BlogPost): Observable<BlogPost> {
+    return this.http.put<BlogPost>(`${this.apiUrl}/posts/${post.id}`, post);
   }
 }

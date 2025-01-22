@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GoogleMapsModule } from '@angular/google-maps';
 
 @Component({
   selector: 'app-maps',
   standalone: true,
-  imports: [CommonModule, GoogleMapsModule],
+  imports: [CommonModule],
   template: `
     <section class="location-section">
       <div class="location-container">
@@ -17,12 +16,13 @@ import { GoogleMapsModule } from '@angular/google-maps';
         <!-- Map Container -->
         <div class="map-wrapper">
           <div class="map-container">
-            <iframe 
+            <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3405.9586379728958!2d-58.022993999999954!3d-31.38770399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95ade81140e0f053%3A0xa48bc2e791251ad2!2sS.E.R.%20Energ%C3%ADa%20Solar%20en%20Concordia%20%7C%20Ingenier%C3%ADa%20Proyectos%20e%20instalaci%C3%B3n%20de%20sistemas%20solares%20fotovoltaicos!5e0!3m2!1ses!2sar!4v1736870936031!5m2!1ses!2sar"
               style="border:0;"
               allowfullscreen=""
               loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade">
+              referrerpolicy="no-referrer-when-downgrade"
+            >
             </iframe>
           </div>
         </div>
@@ -59,13 +59,13 @@ import { GoogleMapsModule } from '@angular/google-maps';
 
           <!-- Action Buttons -->
           <div class="action-buttons">
-            <a href="https://www.google.com/maps/place/S.E.R.+Energ%C3%ADa+Solar+en+Concordia+%7C+Ingenier%C3%ADa+Proyectos+e+instalaci%C3%B3n+de+sistemas+solares+fotovoltaicos/@-3.8037833,-129.1079498,3z/data=!3m1!5s0x95ade81140c39fc7:0x1c7a47747a05e5d8!4m10!1m2!2m1!1sser+soluciones+en+energias+renovables!3m6!1s0x95ade81140e0f053:0xa48bc2e791251ad2!8m2!3d-31.387704!4d-58.022994!15sCiVzZXIgc29sdWNpb25lcyBlbiBlbmVyZ2lhcyByZW5vdmFibGVzWiciJXNlciBzb2x1Y2lvbmVzIGVuIGVuZXJnaWFzIHJlbm92YWJsZXOSARVncmVlbl9lbmVyZ3lfc3VwcGxpZXLgAQA!16s%2Fg%2F11p5byh0l4?entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="action-button primary">
+            <a
+              href="https://www.google.com/maps/place/S.E.R.+Energ%C3%ADa+Solar+en+Concordia+%7C+Ingenier%C3%ADa+Proyectos+e+instalaci%C3%B3n+de+sistemas+solares+fotovoltaicos/@-3.8037833,-129.1079498,3z/data=!3m1!5s0x95ade81140c39fc7:0x1c7a47747a05e5d8!4m10!1m2!2m1!1sser+soluciones+en+energias+renovables!3m6!1s0x95ade81140e0f053:0xa48bc2e791251ad2!8m2!3d-31.387704!4d-58.022994!15sCiVzZXIgc29sdWNpb25lcyBlbiBlbmVyZ2lhcyByZW5vdmFibGVzWiciJXNlciBzb2x1Y2lvbmVzIGVuIGVuZXJnaWFzIHJlbm92YWJsZXOSARVncmVlbl9lbmVyZ3lfc3VwcGxpZXLgAQA!16s%2Fg%2F11p5byh0l4?entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank"
+              class="action-button primary"
+            >
               <i class="fas fa-directions"></i>
               Cómo Llegar
-            </a>
-            <a href="tel:+54 9 3454 15-1258" class="action-button secondary">
-              <i class="fas fa-phone"></i>
-              Llamar
             </a>
           </div>
         </div>
@@ -123,14 +123,14 @@ import { GoogleMapsModule } from '@angular/google-maps';
     }
 
     .map-container {
+      width: 90%;
+      height: 400px;
+      margin: 0 auto;
       position: relative;
-      width: 100%;
-      height: 0;
-      padding-bottom: 50%;
       border-radius: 1rem;
       overflow: hidden;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                  0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
 
     .map-container iframe {
@@ -211,18 +211,6 @@ import { GoogleMapsModule } from '@angular/google-maps';
       box-shadow: 0 10px 15px -3px rgba(12, 69, 122, 0.2);
     }
 
-    .action-button.secondary {
-      background: white;
-      color: var(--primary);
-      border: 2px solid var(--primary);
-    }
-
-    .action-button.secondary:hover {
-      background: var(--surface);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(12, 69, 122, 0.1);
-    }
-
     @media (max-width: 768px) {
       .location-section {
         padding: 2rem 1rem;
@@ -233,7 +221,8 @@ import { GoogleMapsModule } from '@angular/google-maps';
       }
 
       .map-container {
-        padding-bottom: 75%; /* Taller aspect ratio for mobile*/
+        width: 100%;
+        height: 300px;
       }
 
       .info-card {
@@ -258,32 +247,4 @@ import { GoogleMapsModule } from '@angular/google-maps';
     }
   `]
 })
-export class MapsComponent {
-  // Map configuration
-  center: google.maps.LatLngLiteral = {
-    lat: -31.387704,
-    lng: -58.022994
-  };
-  zoom = 15;
-  markerPosition = this.center;
-  markerTitle = 'S.E.R. Energía Solar en Concordia';
-  
-  // Map options
-  options: google.maps.MapOptions = {
-    mapTypeId: 'roadmap',
-    zoomControl: true,
-    scrollwheel: true,
-    disableDoubleClickZoom: true,
-    maxZoom: 20,
-    minZoom: 4,
-    mapTypeControl: true,
-    streetViewControl: true,
-    fullscreenControl: true,
-  };
-
-  // Marker options
-  markerOptions: google.maps.MarkerOptions = {
-    draggable: false,
-    animation: google.maps.Animation.DROP,
-  };
-}
+export class MapsComponent {}

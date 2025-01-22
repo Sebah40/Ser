@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, AfterViewI
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { BlogCreateService } from '../../services/blog-create.service';
+import { BlogService } from '../../services/blog.service';
 import { Router } from '@angular/router';
-
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-blog-create',
   standalone: true,
@@ -40,6 +41,15 @@ import { Router } from '@angular/router';
               >
               <small class="error-message" *ngIf="isFieldInvalid('title')">
                 El título es requerido
+              </small>
+              <input 
+                type="text" 
+                formControlName="author"
+                placeholder="Autor *"
+                [class.invalid]="isFieldInvalid('author')"
+              >
+              <small class="error-message" *ngIf="isFieldInvalid('author')">
+                El autor es requerido
               </small>
             </div>
 
@@ -733,12 +743,16 @@ export class BlogCreateComponent implements OnInit {
   showSuccessModal = false;
   errorMessage: string | null = null;
   showImageHelperModal = false;
+  isEditMode = false;
+  postId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
     private blogCreateService: BlogCreateService,
     private router: Router,
+    private route: ActivatedRoute,
+    private blogService: BlogService
   ) {
     this.blogForm = this.fb.group({
       authCode: ['', [Validators.required, Validators.minLength(6)]],
@@ -748,6 +762,7 @@ export class BlogCreateComponent implements OnInit {
       imageUrl: ['', Validators.required],
       category: ['', Validators.required],
       tags: [''],
+      author: [''],
       contentImages: this.fb.array([]),
       powerOutput: [''],
       panelsInstalled: [null],
@@ -771,6 +786,8 @@ export class BlogCreateComponent implements OnInit {
       console.error('Select element or value is null or undefined.');
     }
   }
+
+  
 
   execCommand(command: string, value: string = '') {
     try {
@@ -894,29 +911,112 @@ export class BlogCreateComponent implements OnInit {
         date: new Date().toISOString().split('T')[0]
       };
 
-      this.blogCreateService.verifyAndCreatePost(postData).subscribe({
-        next: (response) => {
-          this.showSuccessModal = true;
-          this.isSubmitting = false;
-          this.resetForm();
-        },
-        error: (error) => {
-          console.error('Error creating post:', error);
-          this.isSubmitting = false;
-          this.errorMessage = 'Error al crear el post. Por favor, intente nuevamente.';
-        }
-      });
+      // If in edit mode, update the existing post
+      if (this.isEditMode && this.postId) {
+        this.blogCreateService.updatePost(this.postId, postData).subscribe({
+          next: (response) => {
+            this.showSuccessModal = true;
+            this.isSubmitting = false;
+            this.resetForm();
+          },
+          error: (error) => {
+            console.error('Error updating post:', error);
+            this.isSubmitting = false;
+            this.errorMessage = 'Error al actualizar el post. Por favor, intente nuevamente.';
+          }
+        });
+      } else {
+        // Create new post
+        this.blogCreateService.verifyAndCreatePost(postData).subscribe({
+          next: (response) => {
+            this.showSuccessModal = true;
+            this.isSubmitting = false;
+            this.resetForm();
+          },
+          error: (error) => {
+            console.error('Error creating post:', error);
+            this.isSubmitting = false;
+            this.errorMessage = 'Error al crear el post. Por favor, intente nuevamente.';
+          }
+        });
+      }
     } else {
       this.markFormGroupTouched(this.blogForm);
     }
   }
 
+  
+
   ngOnInit() {
     this.isAuthenticated = false;
     this.errorMessage = null;
-    this.addContentImage(); // Add first image input by default
+    this.addContentImage();
+
+    // Check if we're in edit mode by looking for an ID in the route
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.isEditMode = true;
+        this.postId = +params['id'];
+        this.loadPostData(this.postId);
+      }
+    });
   }
 
+  private loadPostData(id: number) {
+    this.blogService.getPostById(id).subscribe({
+      next: (post) => {
+        // Set as authenticated in edit mode
+        this.isAuthenticated = true;
+        
+        // Clear existing content images
+        while (this.contentImages.length !== 0) {
+          this.contentImages.removeAt(0);
+        }
+
+        // Add existing content images
+        if (post.contentImages && post.contentImages.length > 0) {
+          post.contentImages.forEach(imageUrl => {
+            this.contentImages.push(this.fb.control(imageUrl));
+          });
+        } else {
+          this.addContentImage();
+        }
+
+        // Transform tags array back to comma-separated string
+        const tagsString = post.tags ? post.tags.join(', ') : '';
+
+        // Update form with post data, excluding authCode
+        this.blogForm.patchValue({
+          title: post.title,
+          description: post.description,
+          content: post.content,
+          imageUrl: post.imageUrl,
+          category: post.category,
+          tags: tagsString,
+          author: post.author,
+          powerOutput: post.powerOutput,
+          panelsInstalled: post.panelsInstalled,
+          costSavings: post.costSavings
+        });
+
+        // Update editor content after view init
+        setTimeout(() => {
+          if (this.contentEditor) {
+            this.contentEditor.nativeElement.innerHTML = post.content;
+          }
+        });
+
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading post:', error);
+        this.errorMessage = 'Error al cargar el post. Por favor, intente nuevamente.';
+        this.router.navigate(['/blog']);
+      }
+    });
+  }
+
+  
   // Use blogForm's authCode field
   verifyCode() {
     if (this.blogForm.get('authCode')?.valid && !this.isSubmitting) {

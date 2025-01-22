@@ -8,19 +8,21 @@ import { ContactoComponent } from '../contacto/contacto.component';
 import { SolutionFinderComponent } from '../solution-finder/solution-finder.component';
 import { MapsComponent } from "../maps/maps.component";
 import { trigger, transition, style, animate } from '@angular/animations';
+import { FooterComponent } from "../footer/footer.component";
 
 
 @Component({
   selector: 'app-section-container',
   standalone: true,
   imports: [CommonModule,
+    ContactoComponent,
     SolutionsComponent,
     NavbarComponent,
     HeroComponent,
     AboutComponent,
     ContactoComponent,
     SolutionFinderComponent,
-    MapsComponent],
+    MapsComponent, FooterComponent],
   animations: [
     trigger('fadeInUp', [
       transition(':enter', [
@@ -59,6 +61,8 @@ import { trigger, transition, style, animate } from '@angular/animations';
           <app-solutions></app-solutions>
         </section>
 
+        
+
         <section id="finder" class="snap-nosection">
           <app-solution-finder></app-solution-finder>
         </section>
@@ -71,6 +75,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
           <app-contacto></app-contacto>
         </section>
 
+          <app-footer></app-footer>
         <!-- Back to Top Button -->
         <button 
           class="back-to-top"

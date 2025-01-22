@@ -38,7 +38,7 @@ import {
     ])
   ],
   template: `
-    <section class="solutions-wrapper">
+    <section class="solutions-wrapper" id="solutions">
       <div class="solutions-header">
         <div class="header-content" @cardAnimation>
           <h1 class="gradient-text">Soluciones Energéticas</h1>
@@ -90,8 +90,8 @@ import {
                 class="action-button secondary"
                 (click)="$event.stopPropagation()"
               >
-                <i class="fas fa-shopping-cart"></i>
-                Tienda
+              <img src="/RigelecSvgs/venta blanco.svg" alt="Red Electrica Icon" />
+              Tienda
               </a>
             </div>
           </div>
@@ -301,6 +301,12 @@ import {
       opacity: 0;
       transform: translateY(10px);
       transition: opacity var(--transition), transform var(--transition);
+    }
+
+    .card-actions img {
+      width: 20px; /* Adjust this value as needed to scale the image */
+  height: 20px; /* Keep the image square */
+  object-fit: contain; /* Ensure the aspect ratio is maintained */
     }
 
     .card-actions.show {

@@ -29,6 +29,8 @@ export interface HeroSlide {
             class="cta-button text-slide"
             (click)="scrollToContacto()"
           >
+          <img src="/RigelecSvgs/asesoramiento técnico blanco.svg" alt="Red Electrica Icon" />
+
             Contáctanos
           </button>
         </div>
@@ -39,286 +41,263 @@ export interface HeroSlide {
   `,
   styles: [
     `
-    .hero-container {
-      min-height: 100vh;
-      width: 100%;
-      position: relative;
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      transition: background-image 1s ease-in-out;
-    }
+    /* Base container styles */
+.hero-container {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: background-image 1s ease-in-out;
+}
 
-    /* Overlay gradient */
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.27) 0%,
-        rgba(0, 0, 0, 0.3) 50%
-      );
-      z-index: 1;
-    }
+/* Overlay */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.27) 0%,
+    rgba(0, 0, 0, 0.3) 50%
+  );
+  z-index: 1;
+}
 
-    /* Content layout */
-    .content-container {
-      max-width: 1200px;
-      width: 100%;
-      padding: 0 2rem;
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+/* Content layout */
+.content-container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  text-align: center; /* Add this */
+}
 
-    .text-container {
-      text-align: center;
-      color: white;
-      max-width: 800px;
-      margin: auto;
-      padding: 2rem 0;
-      animation: none;
-    }
+.content-container img {
+  width: 30px;
+  height: 30px;
+}
 
-    .text-container * {
-      animation-fill-mode: both;
-    }
+.text-container {
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem 0;
+  animation: none;
+}
 
-    /* Typography */
-    .hero-title {
-      font-size: 4rem;
-      font-weight: 800;
-      margin-bottom: 1.5rem;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-    }
+/* Typography */
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
 
-    .hero-subtitle {
-      font-size: 1.5rem;
-      font-weight: 400;
-      line-height: 1.6;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-    }
+.hero-subtitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
 
-    /* Button styles */
-    .cta-button {
-      background: #0c457a;
-      color: white;
-      border: none;
-      padding: 1rem 2.5rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+/* CTA Button */
+.cta-button {
+  display: inline-flex; /* Change from flex to inline-flex */
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #0c457a;
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto; /* Add this to help with centering */
+}
 
-    .cta-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-      background: #0d4d8a;
-    }
+.cta-button img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  vertical-align: middle;
+}
 
-    /* Navigation buttons */
-    .nav-button {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(4px);
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      z-index: 3;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background: #0d4d8a;
+}
 
-    .nav-button:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.6);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-      transform: translateY(-50%) scale(1.05);
-    }
+/* Navigation buttons */
+.nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 3;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
-    .nav-button.left {
-      left: 20px;
-    }
+.nav-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-50%) scale(1.05);
+}
 
-    .nav-button.right {
-      right: 20px;
-    }
+.nav-button.left {
+  left: 20px;
+}
 
-    /* Carousel indicators */
-    .carousel-indicators {
-      position: relative;
-      display: flex;
-      gap: 10px;
-      z-index: 3;
-      padding: 15px;
-      margin-top: auto;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
+.nav-button.right {
+  right: 20px;
+}
 
-    .indicator {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.5);
-      border: 2px solid rgba(255, 255, 255, 0.7);
-      cursor: pointer;
-      padding: 0;
-      transition: all 0.3s ease;
-      margin: 0 5px;
-    }
+/* Carousel indicators */
+.carousel-indicators {
+  position: absolute;
+  bottom: 100px;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  z-index: 3;
+  padding: 15px;
+  justify-content: center;
+  align-items: center;
+}
 
-    .indicator.active {
-      background: white;
-      transform: scale(1.2);
-      border-color: white;
-    }
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+  margin: 0 5px;
+}
 
-    /* Animations */
-    .slide-in {
-      animation: slideIn 0.8s ease-out forwards;
-      opacity: 0;
-    }
+.indicator.active {
+  background: white;
+  transform: scale(1.2);
+  border-color: white;
+}
 
-    .hero-subtitle.slide-in {
-      animation-delay: 0.2s;
-    }
+/* Animations */
+.text-container * {
+  animation-fill-mode: both;
+}
 
-    .cta-button.slide-in {
-      animation-delay: 0.4s;
-    }
+.text-slide {
+  animation: textSlide 0.8s ease-out forwards;
+  opacity: 0;
+}
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+.hero-title.text-slide {
+  animation-delay: 0s;
+}
 
-    /* Responsive design */
-    @media (max-width: 768px) {
-      .content-container {
-        padding: 0 1rem;
-      }
+.hero-subtitle.text-slide {
+  animation-delay: 0.2s;
+}
 
-      .hero-title {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-      }
+.cta-button.text-slide {
+  animation-delay: 0.4s;
+}
 
-      .hero-subtitle {
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
-      }
+@keyframes textSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-      .nav-button {
-        width: 40px;
-        height: 40px;
-      }
+/* Responsive design */
+@media (max-width: 768px) {
+  .content-container {
+    padding: 0 1rem;
+  }
 
-      .nav-button.left {
-        left: 10px;
-      }
+  .hero-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
 
-      .nav-button.right {
-        right: 10px;
-      }
+  .hero-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
 
-      .indicator {
-        width: 8px;
-        height: 8px;
-      }
+  .nav-button {
+    width: 40px;
+    height: 40px;
+  }
 
-      .cta-button {
-        padding: 0.875rem 2rem;
-        font-size: 1rem;
-      }
-    }
+  .nav-button.left {
+    left: 10px;
+  }
 
-    @media (max-width: 480px) {
-      .hero-title {
-        font-size: 2rem;
-      }
+  .nav-button.right {
+    right: 10px;
+  }
 
-      .hero-subtitle {
-        font-size: 1.1rem;
-      }
-    }
-    .carousel-indicators {
-      position: absolute;
-      bottom: 100px;  /* Move indicators up */
-      left: 0;
-      right: 0;
-      display: flex;
-      gap: 10px;
-      z-index: 3;
-      padding: 15px;
-      justify-content: center;
-      align-items: center;
-    }
+  .indicator {
+    width: 8px;
+    height: 8px;
+  }
 
-    /* Text animations */
-    .text-container {
-      text-align: center;
-      color: white;
-      max-width: 800px;
-      margin: auto;
-      padding: 2rem 0;
-    }
+  .cta-button {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+  }
+}
 
-    .text-slide {
-      animation: textSlide 0.8s ease-out forwards;
-      opacity: 0;
-    }
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem;
+  }
 
-    .hero-title.text-slide {
-      animation-delay: 0s;
-    }
-
-    .hero-subtitle.text-slide {
-      animation-delay: 0.2s;
-    }
-
-    .cta-button.text-slide {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes textSlide {
-      0% {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+}
     `,
   ],
 })

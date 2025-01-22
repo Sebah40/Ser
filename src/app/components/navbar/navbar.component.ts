@@ -10,7 +10,9 @@ import { CommonModule } from '@angular/common';
     <nav class="navbar" [class.hidden]="isHidden">
       <div class="navbar-content">
         <div class="logo">
-          <img src="./logo-color.svg" alt="Logo" class="logo-img" />
+          <a href="#hero">
+            <img src="./logo-color.svg" alt="Logo" class="logo-img" />
+          </a>
         </div>
 
         <div class="menu-toggle" (click)="toggleMenu()">
@@ -31,15 +33,19 @@ import { CommonModule } from '@angular/common';
         <ul class="nav-links" [class.open]="menuOpen">
           <li><a href="/" class="nav-link">Inicio</a></li>
           <li><a href="#contacto" class="nav-link">Contacto</a></li>
-          <li><a href="/blog" class="nav-link">Obras realizadas</a></li> <!-- Added Blog button -->
+          <li><a href="/servicios" class="nav-link">Servicios</a></li>
+          <li><a href="/blog" class="nav-link">Blog</a></li>
+          <!-- Added Blog button -->
           <li>
-    <a href="https://rigelec.com.ar" 
-       target="_blank" 
-       class="rigelec-button">
-      Rigelec
-      <img src="./original.svg" alt="Rigelec" class="rigelec-icon" />
-    </a>
-  </li>
+            <a
+              href="https://rigelec.com.ar"
+              target="_blank"
+              class="rigelec-button"
+            >
+              Rigelec
+              <img src="./original.svg" alt="Rigelec" class="rigelec-icon" />
+            </a>
+          </li>
           <li>
             <a
               href="https://tienda.rigelec.com.ar/?product_cat=8-kits-solares"
@@ -47,24 +53,7 @@ import { CommonModule } from '@angular/common';
               class="store-button"
             >
               Tienda
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="store-icon"
-              >
-                <path
-                  d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"
-                ></path>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <path d="M16 10a4 4 0 0 1-8 0"></path>
-              </svg>
+              <img src="/RigelecSvgs/venta blanco.svg" alt="Logo" class="logo-img" />
             </a>
           </li>
         </ul>
@@ -78,6 +67,12 @@ import { CommonModule } from '@angular/common';
         margin: 0;
         padding: 0;
       }
+
+      .nav-links img {
+  width: 25px; /* Adjust this value as needed to scale the image */
+  height: 25px; /* Keep the image square */
+  object-fit: contain; /* Ensure the aspect ratio is maintained */
+}
 
       .navbar {
         position: fixed;
@@ -117,43 +112,43 @@ import { CommonModule } from '@angular/common';
       }
 
       .rigelec-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background:rgb(39, 56, 50);  /* Using your primary blue color */
-  color: white;
-  padding: 0.5rem 1.25rem;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-}
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgb(39, 56, 50); /* Using your primary blue color */
+        color: white;
+        padding: 0.5rem 1.25rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
 
-.rigelec-button:hover {
-  background: rgb(70, 82, 77); /* Lighter blue for hover */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+      .rigelec-button:hover {
+        background: rgb(70, 82, 77); /* Lighter blue for hover */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
 
-.rigelec-icon {
-  height: 16px;
-  width: auto;
-  transition: transform 0.3s ease;
-}
+      .rigelec-icon {
+        height: 16px;
+        width: auto;
+        transition: transform 0.3s ease;
+      }
 
-.rigelec-button:hover .rigelec-icon {
-  transform: translateY(-1px);
-}
+      .rigelec-button:hover .rigelec-icon {
+        transform: translateY(-1px);
+      }
 
-/* Update mobile styles */
-@media (max-width: 768px) {
-  .rigelec-button {
-    padding: 0.5rem 1.25rem;
-    font-size: 1rem;
-  }
-}
+      /* Update mobile styles */
+      @media (max-width: 768px) {
+        .rigelec-button {
+          padding: 0.5rem 1.25rem;
+          font-size: 1rem;
+        }
+      }
 
       .nav-links {
         display: flex;
@@ -249,8 +244,8 @@ import { CommonModule } from '@angular/common';
           font-size: 1rem;
         }
       }
-    `
-  ]
+    `,
+  ],
 })
 export class NavbarComponent {
   isHidden = false;
