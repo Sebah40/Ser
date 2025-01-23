@@ -42,8 +42,8 @@ import { CommonModule } from '@angular/common';
               target="_blank"
               class="rigelec-button"
             >
+            <img src="./original.svg" alt="Rigelec" class="rigelec-icon" />
               Rigelec
-              <img src="./original.svg" alt="Rigelec" class="rigelec-icon" />
             </a>
           </li>
           <li>
@@ -52,8 +52,9 @@ import { CommonModule } from '@angular/common';
               target="_blank"
               class="store-button"
             >
+            <img src="/RigelecSvgs/venta blanco.svg" alt="Logo" class="logo-img" />
+
               Tienda
-              <img src="/RigelecSvgs/venta blanco.svg" alt="Logo" class="logo-img" />
             </a>
           </li>
         </ul>
@@ -115,7 +116,7 @@ import { CommonModule } from '@angular/common';
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        background: rgb(39, 56, 50); /* Using your primary blue color */
+        background: rgb(61, 92, 80); /* Using your primary blue color */
         color: white;
         padding: 0.5rem 1.25rem;
         border-radius: 50px;

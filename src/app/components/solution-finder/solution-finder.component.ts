@@ -68,14 +68,14 @@ const questionTree: TreeNode = {
                           options: [
                             {
                               text: '1-2 días (clima mayormente soleado)',
-                              weights: { offGrid: 8, onGrid: 0, bombeo: 0 }
+                              weights: { offGrid: 8, onGrid: 0, bombeo: 0 },
                             },
                             {
                               text: '3-4 días (clima variable)',
-                              weights: { offGrid: 10, onGrid: 0, bombeo: 0 }
-                            }
-                          ]
-                        }
+                              weights: { offGrid: 10, onGrid: 0, bombeo: 0 },
+                            },
+                          ],
+                        },
                       },
                       {
                         text: 'Moderado (incluye refrigerador)',
@@ -86,17 +86,17 @@ const questionTree: TreeNode = {
                           options: [
                             {
                               text: 'Sí, planeo agregar más equipos',
-                              weights: { offGrid: 5, onGrid: 5, bombeo: 0 }
+                              weights: { offGrid: 5, onGrid: 5, bombeo: 0 },
                             },
                             {
                               text: 'No, mantendré el mismo consumo',
-                              weights: { offGrid: 8, onGrid: 0, bombeo: 0 }
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  }
+                              weights: { offGrid: 8, onGrid: 0, bombeo: 0 },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
                 },
                 {
                   text: '$8,000 - $15,000 USD',
@@ -114,14 +114,14 @@ const questionTree: TreeNode = {
                           options: [
                             {
                               text: 'Sí, amplio espacio disponible',
-                              weights: { offGrid: 10, onGrid: 0, bombeo: 0 }
+                              weights: { offGrid: 10, onGrid: 0, bombeo: 0 },
                             },
                             {
                               text: 'Espacio limitado',
-                              weights: { offGrid: 5, onGrid: 3, bombeo: 0 }
-                            }
-                          ]
-                        }
+                              weights: { offGrid: 5, onGrid: 3, bombeo: 0 },
+                            },
+                          ],
+                        },
                       },
                       {
                         text: 'Alto consumo (incluye aire acondicionado)',
@@ -132,20 +132,20 @@ const questionTree: TreeNode = {
                           options: [
                             {
                               text: 'Durante el día principalmente',
-                              weights: { offGrid: 8, onGrid: 2, bombeo: 0 }
+                              weights: { offGrid: 8, onGrid: 2, bombeo: 0 },
                             },
                             {
                               text: 'Uso constante día y noche',
-                              weights: { offGrid: 4, onGrid: 6, bombeo: 0 }
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
+                              weights: { offGrid: 4, onGrid: 6, bombeo: 0 },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
           },
           {
             text: 'Rancho/Finca productiva',
@@ -163,14 +163,14 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Confiabilidad del sistema',
-                        weights: { offGrid: 10, onGrid: 0, bombeo: 2 }
+                        weights: { offGrid: 10, onGrid: 0, bombeo: 2 },
                       },
                       {
                         text: 'Minimizar costos iniciales',
-                        weights: { offGrid: 5, onGrid: 3, bombeo: 5 }
-                      }
-                    ]
-                  }
+                        weights: { offGrid: 5, onGrid: 3, bombeo: 5 },
+                      },
+                    ],
+                  },
                 },
                 {
                   text: 'Principalmente equipos de trabajo',
@@ -181,20 +181,20 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Herramientas pequeñas y medianas',
-                        weights: { offGrid: 9, onGrid: 0, bombeo: 1 }
+                        weights: { offGrid: 9, onGrid: 0, bombeo: 1 },
                       },
                       {
                         text: 'Equipos industriales pesados',
-                        weights: { offGrid: 4, onGrid: 6, bombeo: 0 }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      }
+                        weights: { offGrid: 4, onGrid: 6, bombeo: 0 },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
     },
     {
       text: 'Reducir el costo de la factura de luz',
@@ -219,14 +219,14 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Reducir 50% o más',
-                        weights: { offGrid: 0, onGrid: 10, bombeo: 0 }
+                        weights: { offGrid: 0, onGrid: 10, bombeo: 0 },
                       },
                       {
                         text: 'Cualquier ahorro es bienvenido',
-                        weights: { offGrid: 0, onGrid: 7, bombeo: 0 }
-                      }
-                    ]
-                  }
+                        weights: { offGrid: 0, onGrid: 7, bombeo: 0 },
+                      },
+                    ],
+                  },
                 },
                 {
                   text: 'Tarifa comercial/industrial',
@@ -237,17 +237,17 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Horario pico (más caro)',
-                        weights: { offGrid: 2, onGrid: 10, bombeo: 0 }
+                        weights: { offGrid: 2, onGrid: 10, bombeo: 0 },
                       },
                       {
                         text: 'Horario regular',
-                        weights: { offGrid: 0, onGrid: 8, bombeo: 0 }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
+                        weights: { offGrid: 0, onGrid: 8, bombeo: 0 },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
           },
           {
             text: '$100 - $300 USD',
@@ -265,14 +265,14 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Sí, quiero baterías de respaldo',
-                        weights: { offGrid: 3, onGrid: 8, bombeo: 0 }
+                        weights: { offGrid: 3, onGrid: 8, bombeo: 0 },
                       },
                       {
                         text: 'No, solo generación solar',
-                        weights: { offGrid: 0, onGrid: 10, bombeo: 0 }
-                      }
-                    ]
-                  }
+                        weights: { offGrid: 0, onGrid: 10, bombeo: 0 },
+                      },
+                    ],
+                  },
                 },
                 {
                   text: 'Espacio limitado o con sombra',
@@ -283,20 +283,20 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Sí, puedo cambiar hábitos',
-                        weights: { offGrid: 0, onGrid: 8, bombeo: 0 }
+                        weights: { offGrid: 0, onGrid: 8, bombeo: 0 },
                       },
                       {
                         text: 'No, necesito mantener mi consumo actual',
-                        weights: { offGrid: 0, onGrid: 5, bombeo: 0 }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      }
+                        weights: { offGrid: 0, onGrid: 5, bombeo: 0 },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
     },
     {
       text: 'Bombear agua',
@@ -321,14 +321,14 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Cultivos de bajo consumo',
-                        weights: { offGrid: 0, onGrid: 0, bombeo: 7 }
+                        weights: { offGrid: 0, onGrid: 0, bombeo: 7 },
                       },
                       {
                         text: 'Cultivos que requieren riego frecuente',
-                        weights: { offGrid: 0, onGrid: 0, bombeo: 10 }
-                      }
-                    ]
-                  }
+                        weights: { offGrid: 0, onGrid: 0, bombeo: 10 },
+                      },
+                    ],
+                  },
                 },
                 {
                   text: 'Más de 1 hectárea',
@@ -339,17 +339,17 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Sí, riego por goteo',
-                        weights: { offGrid: 0, onGrid: 0, bombeo: 10 }
+                        weights: { offGrid: 0, onGrid: 0, bombeo: 10 },
                       },
                       {
                         text: 'No, necesito sistema completo',
-                        weights: { offGrid: 0, onGrid: 0, bombeo: 8 }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
+                        weights: { offGrid: 0, onGrid: 0, bombeo: 8 },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
           },
           {
             text: 'Consumo ganadero',
@@ -367,14 +367,14 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Sí, tengo tanque elevado',
-                        weights: { offGrid: 0, onGrid: 0, bombeo: 10 }
+                        weights: { offGrid: 0, onGrid: 0, bombeo: 10 },
                       },
                       {
                         text: 'No, necesito solución completa',
-                        weights: { offGrid: 0, onGrid: 0, bombeo: 7 }
-                      }
-                    ]
-                  }
+                        weights: { offGrid: 0, onGrid: 0, bombeo: 7 },
+                      },
+                    ],
+                  },
                 },
                 {
                   text: 'Más de 50 cabezas',
@@ -385,22 +385,22 @@ const questionTree: TreeNode = {
                     options: [
                       {
                         text: 'Sí, todo el día',
-                        weights: { offGrid: 2, onGrid: 0, bombeo: 10 }
+                        weights: { offGrid: 2, onGrid: 0, bombeo: 10 },
                       },
                       {
                         text: 'No, solo durante el día',
-                        weights: { offGrid: 0, onGrid: 0, bombeo: 8 }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
+                        weights: { offGrid: 0, onGrid: 0, bombeo: 8 },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
 };
 
 interface OptionNode {
@@ -465,7 +465,7 @@ interface Result {
           solución para tus necesidades.
         </p>
         <button class="primary-button" (click)="startQuiz()">
-          Comenzar <i class="fas fa-solar-panel"></i>
+          Comenzar
         </button>
       </div>
 
@@ -701,6 +701,11 @@ interface Result {
         transform: translateY(0);
         transition: transform 0.3s ease;
       }
+
+      .primary-button img {
+  width: 25px;
+  height: 25px;
+}
 
       .start-screen:hover {
         transform: translateY(-5px);
