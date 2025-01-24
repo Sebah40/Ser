@@ -23,7 +23,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
         <!-- Asesoramiento Section -->
         <div class="service-card">
           <div class="icon-container">
-            <i class="fas fa-lightbulb"></i>
+          <img src="/RigelecSvgs/focos blanco.svg" alt="Red Electrica Icon" />
           </div>
           <h2>Asesoramiento Energético</h2>
           <p>
@@ -53,7 +53,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
         <!-- Instalación Section -->
         <div class="service-card">
           <div class="icon-container">
-            <i class="fas fa-solar-panel"></i>
+          <img src="/RigelecSvgs/paneles solares blanco.svg" alt="Red Electrica Icon" />
           </div>
           <h2>Instalación y Venta</h2>
           <p>
@@ -83,7 +83,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
         <!-- Post-venta Section -->
         <div class="service-card">
           <div class="icon-container">
-            <i class="fas fa-wrench"></i>
+          <img src="/RigelecSvgs/red_electrica_blanco.svg" alt="Red Electrica Icon" />
           </div>
           <h2>Mantenimiento y Post-venta</h2>
           <p>
@@ -117,35 +117,35 @@ import { NavbarComponent } from '../navbar/navbar.component';
         <div class="timeline">
           <div class="timeline-item">
             <div class="timeline-icon">
-              <i class="fas fa-comments"></i>
+            <img src="/RigelecSvgs/focos azul.svg" alt="Red Electrica Icon" />
             </div>
             <h3>Consulta Inicial</h3>
             <p>Evaluamos tus necesidades y objetivos energéticos</p>
           </div>
           <div class="timeline-item">
             <div class="timeline-icon">
-              <i class="fas fa-chart-line"></i>
+            <img src="/RigelecSvgs/asesoramiento técnico azul.svg" alt="Red Electrica Icon" />
             </div>
             <h3>Análisis Técnico</h3>
             <p>Diseñamos la solución óptima para tu caso</p>
           </div>
           <div class="timeline-item">
             <div class="timeline-icon">
-              <i class="fas fa-file-signature"></i>
+            <img src="/RigelecSvgs/Post venta azul.svg" alt="Red Electrica Icon" />
             </div>
             <h3>Propuesta</h3>
             <p>Presentamos las mejores opciones para tu proyecto</p>
           </div>
           <div class="timeline-item">
             <div class="timeline-icon">
-              <i class="fas fa-tools"></i>
+            <img src="/RigelecSvgs/paneles solares azul.svg" alt="Red Electrica Icon" />
             </div>
             <h3>Implementación</h3>
             <p>Instalación profesional con los más altos estándares</p>
           </div>
           <div class="timeline-item">
             <div class="timeline-icon">
-              <i class="fas fa-shield-alt"></i>
+            <img src="/RigelecSvgs/instalación azul.svg" alt="Red Electrica Icon" />
             </div>
             <h3>Seguimiento</h3>
             <p>Soporte continuo y mantenimiento preventivo</p>
@@ -240,6 +240,12 @@ import { NavbarComponent } from '../navbar/navbar.component';
       margin-bottom: 1.5rem;
     }
 
+    .icon-container img {
+  width: 60px; /* Fixed width */
+  height: 60px; /* Fixed height */
+  object-fit: contain; /* Ensures the aspect ratio is maintained */
+}
+
     .icon-container i {
       font-size: 1.5rem;
       color: white;
@@ -307,6 +313,11 @@ import { NavbarComponent } from '../navbar/navbar.component';
       margin: 0 auto 1rem;
       color: #0c457a;
     }
+    .timeline-icon img {
+  width: 80%; /* Ensures the image is smaller than the container */
+  height: 80%; /* Ensures the image maintains its aspect ratio and fits within the container */
+  object-fit: contain; /* Ensures the SVG scales correctly without distortion */
+}
 
     .timeline-item h3 {
       font-size: 1.2rem;

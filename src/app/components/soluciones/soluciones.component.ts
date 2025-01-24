@@ -44,7 +44,8 @@ import {
           <h1 class="gradient-text">Soluciones Energéticas</h1>
           <p class="subtitle">Descubre el poder de la energía solar para tu hogar o negocio</p>
           <div class="solutions-footer">
-          <a href="#finder" class="finder-button"><i class="fas fa-lightbulb"></i>Encuentra tu Solución Ideal</a>
+          <a href="#finder" class="finder-button"><img src="/RigelecSvgs/focos blanco.svg" alt="Red Electrica Icon" />
+          Encuentra tu Solución Ideal</a>
       </div>
         </div>
       </div>
@@ -354,6 +355,13 @@ import {
       align-items: center;
       gap: 1rem;
     }
+
+    .solutions-footer img {
+  width: 30px; /* Adjust the width to make it smaller */
+  height: 30px; /* Adjust the height proportionally */
+  object-fit: contain; /* Ensure the aspect ratio is maintained */
+  margin-right: 8px; /* Optional: to add some space between the icon and the text */
+}
 
     .finder-button {
       background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);

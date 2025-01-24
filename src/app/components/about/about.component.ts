@@ -72,7 +72,7 @@ import { RouterModule } from '@angular/router';
             <div class="energy-stats-container" *ngIf="!isLoading && data">
               <div class="energy-stat-card">
                 <div class="stat-icon">
-                <img src="/RigelecSvgs/ahorro energia blanco.svg" alt="Red Electrica Icon" />
+                <img src="/RigelecSvgs/red_electrica_blanco.svg" alt="Red Electrica Icon" />
                 </div>
                 <div class="stat-content">
                   <h3>Energía total generada</h3>
@@ -99,7 +99,7 @@ import { RouterModule } from '@angular/router';
 
               <div class="energy-stat-card">
                 <div class="stat-icon">
-                <i class="fas fa-tree"></i>
+                <img src="/RigelecSvgs/arbol blanco.svg" alt="Red Electrica Icon" />
                 </div>
                 <div class="stat-content">
                   <h3>Árboles equivalentes</h3>
