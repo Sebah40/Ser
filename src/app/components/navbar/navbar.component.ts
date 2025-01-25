@@ -42,7 +42,7 @@ import { CommonModule } from '@angular/common';
               class="rigelec-button"
             >
             <img src="./original.svg" alt="Rigelec" class="rigelec-icon" />
-              Rigelec site
+              Rigelec
             </a>
           </li>
           <li>
